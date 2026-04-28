@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClInclude Include="Source\pch.h" />
+    <ClInclude Include="Source\Core\Game.h" />
+    <ClInclude Include="Source\Core\Platform\PlatformContext.h" />
+    <ClInclude Include="Source\Core\GameTime.h" />
+    <ClInclude Include="Source\Core\Platform.h" />
+    <ClInclude Include="Source\Core\Resource\ResourceManager.h" />
+    <ClInclude Include="Source\Core\Graphics\Color.h" />
+    <ClInclude Include="Source\Core\Platform\PlatformColor.h" />
+    <ClInclude Include="Source\Core\Screens\Screen.h" />
+    <ClInclude Include="Source\Core\Screens\ScreenManager.h" />
+    <ClInclude Include="Source\Core\Input\InputState.h" />
+    <ClInclude Include="Source\Core\Input\Keys.h" />
+    <ClInclude Include="Source\Core\Input\MouseButton.h" />
+    <ClInclude Include="Source\Core\Graphics\SpriteBatch.h" />
+    <ClInclude Include="Source\Core\Math\Region.h" />
+    <ClInclude Include="Source\Core\Math\Vector2.h" />
+    <ClInclude Include="Source\Core\Resource\Texture.h" />
+    <ClInclude Include="Source\Core\Resource\RenderTarget.h" />
+    <ClInclude Include="Source\Core\Resource\Font.h" />
+    <ClInclude Include="Source\Core\Platform\PlatformTexture.h" />
+    <ClInclude Include="Source\Core\Platform\PlatformFont.h" />
+    <ClInclude Include="Source\Core\Resource\Animation.h" />
+    <ClInclude Include="Source\Core\Resource\AnimationSet.h" />
+    <ClInclude Include="Source\Core\Resource\Effect.h" />
+    <ClInclude Include="Source\Core\Resource\TextResource.h" />
+    <ClInclude Include="Source\Core\Platform\PlatformInput.h" />
+    <ClInclude Include="Source\Core\Math\Line.h" />
+    <ClInclude Include="Source\Core\Math\Spline.h" />
+    <ClInclude Include="Source\Core\Math\Circle.h" />
+    <ClInclude Include="Source\Core\Math\Rectangle.h" />
+    <ClInclude Include="Source\Core\Interfaces\IPrimitive.h" />
+    <ClInclude Include="Source\Core\Interfaces\IPositionable.h" />
+    <ClInclude Include="Source\Core\Math\Math.h" />
+    <ClInclude Include="Source\GUI\Control.h" />
+    <ClInclude Include="Source\GUI\Button.h" />
+    <ClInclude Include="Source\GUI\Textbox.h" />
+    <ClInclude Include="Source\Particles\Particle.h" />
+    <ClInclude Include="Source\Particles\Interfaces\IBehaviors.h" />
+    <ClInclude Include="Source\Particles\ParticleBehaviors.h" />
+    <ClInclude Include="Source\Particles\ParticleEmitter.h" />
+    <ClInclude Include="Source\GUI\Checkbox.h" />
+    <ClInclude Include="Source\GUI\Panel.h" />
+    <ClInclude Include="Source\Core\Interfaces\IBounded.h" />
+    <ClInclude Include="Source\Core\Interfaces\ITargetable.h" />
+    <ClInclude Include="Source\Core\Camera.h" />
+    <ClInclude Include="Source\Core\Interfaces\IRenderContext.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\pch.cpp" />
+    <ClCompile Include="Source\Core\Game.cpp" />
+    <ClCompile Include="Source\Core\Resource\ResourceManager.cpp" />
+    <ClCompile Include="Source\Core\Graphics\Color.cpp" />
+    <ClCompile Include="Source\Core\Screens\Screen.cpp" />
+    <ClCompile Include="Source\Core\Screens\ScreenManager.cpp" />
+    <ClCompile Include="Source\Core\Input\InputState.cpp" />
+    <ClCompile Include="Source\Core\Graphics\SpriteBatch.cpp" />
+    <ClCompile Include="Source\Core\Math\Region.cpp" />
+    <ClCompile Include="Source\Core\Math\Vector2.cpp" />
+    <ClCompile Include="Source\Core\Resource\Texture.cpp" />
+    <ClCompile Include="Source\Core\Resource\RenderTarget.cpp" />
+    <ClCompile Include="Source\Core\Resource\Font.cpp" />
+    <ClCompile Include="Source\Core\Resource\Animation.cpp" />
+    <ClCompile Include="Source\Core\Resource\AnimationSet.cpp" />
+    <ClCompile Include="Source\Core\Resource\Effect.cpp" />
+    <ClCompile Include="Source\Core\Math\Line.cpp" />
+    <ClCompile Include="Source\Core\Math\Spline.cpp" />
+    <ClCompile Include="Source\Core\Math\Circle.cpp" />
+    <ClCompile Include="Source\Core\Math\Rectangle.cpp" />
+    <ClCompile Include="Source\Core\Math\Math.cpp" />
+    <ClCompile Include="Source\GUI\Button.cpp" />
+    <ClCompile Include="Source\GUI\Control.cpp" />
+    <ClCompile Include="Source\GUI\Textbox.cpp" />
+    <ClCompile Include="Source\GUI\Checkbox.cpp" />
+    <ClCompile Include="Source\GUI\Panel.cpp" />
+    <ClCompile Include="Source\Core\Camera.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <None Include="CLAUDE.md" />
+  </ItemGroup>
+</Project>
