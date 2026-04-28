@@ -44,7 +44,7 @@
     <ClInclude Include="Source\GUI\Checkbox.h" />
     <ClInclude Include="Source\GUI\Panel.h" />
     <ClInclude Include="Source\Core\Interfaces\IBounded.h" />
-    <ClInclude Include="Source\Core\Interfaces\ITargetable.h" />
+    <ClInclude Include="Source\Core\Interfaces\ICameraTarget.h" />
     <ClInclude Include="Source\Core\Camera.h" />
     <ClInclude Include="Source\Core\Interfaces\IRenderContext.h" />
   </ItemGroup>
@@ -78,7 +78,7 @@
     <ClCompile Include="Source\Core\Camera.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
     <None Include="CLAUDE.md" />
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>

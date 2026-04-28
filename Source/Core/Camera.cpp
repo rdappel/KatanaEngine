@@ -19,7 +19,7 @@ namespace KatanaEngine
 		m_viewportSize = Vector2(width, height);
 	}
 
-	void Camera::SetTarget(const ITargetable* target)
+	void Camera::SetTarget(const ICameraTarget* target)
 	{
 		m_pTarget = target;
 	}

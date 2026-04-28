@@ -4,9 +4,9 @@
 
 namespace KatanaEngine
 {
-	class ITargetable : public IPositionable
+	class ICameraTarget : public IPositionable
 	{
 	public:
-		virtual ~ITargetable() { }
+		virtual ~ICameraTarget() { }
 	};
 }
