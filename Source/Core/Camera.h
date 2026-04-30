@@ -2,7 +2,7 @@
 
 #include "Core/Interfaces/IBounded.h"
 #include "Core/Interfaces/IRenderContext.h"
-#include "Core/Interfaces/ITargetable.h"
+#include "Core/Interfaces/ICameraTarget.h"
 #include "Core/Math/Vector2.h"
 
 namespace KatanaEngine
@@ -15,7 +15,7 @@ namespace KatanaEngine
 		void SetViewportSize(const Vector2& size);
 		void SetViewportSize(float width, float height);
 
-		void SetTarget(const ITargetable* target);
+		void SetTarget(const ICameraTarget* target);
 		void SetBounds(const IBounded* bounds);
 
 		void Update();
@@ -34,7 +34,7 @@ namespace KatanaEngine
 
 		Vector2 m_viewPosition;
 		Vector2 m_viewportSize;
-		const ITargetable* m_pTarget = nullptr;
+		const ICameraTarget* m_pTarget = nullptr;
 		const IBounded* m_pBounds = nullptr;
 	};
 }

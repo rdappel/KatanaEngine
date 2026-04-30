@@ -6,19 +6,17 @@
 #include "Input/InputState.h"
 #include "Graphics/SpriteBatch.h"
 #include "Resource/ResourceManager.h"
+#include "Screens/ScreenManager.h"
+#include "GameTime.h"
 
 namespace KatanaEngine
 {
 	// Forward declarations
-	class ResourceManager;
-	class ScreenManager;
-	struct GameTime;
 	struct PlatformContext;
 	struct Color;
 
 	struct GameConfig
 	{
-		bool UseScreenManager = true;
 		std::string ContentRoot = "../../../Content/";
 		int ScreenWidth = 1600;
 		int ScreenHeight = 900;
@@ -46,6 +44,7 @@ namespace KatanaEngine
 
 		int GetScreenWidth() const { return m_screenWidth; }
 		int GetScreenHeight() const { return m_screenHeight; }
+		Vector2 GetScreenSize() const { return Vector2(m_screenWidth, m_screenHeight); }
 		void SetScreenSize(int width, int height);
 
 		const std::string& GetTitle() const { return m_title; }
@@ -54,9 +53,12 @@ namespace KatanaEngine
 		double GetTargetFrameRate() const { return m_targetFrameRate; }
 		void SetTargetFrameRate(double fps);
 
-		ScreenManager* GetScreenManager() { return m_pScreenManager.get(); }
-		const ScreenManager* GetScreenManager() const { return m_pScreenManager.get(); }
+		ScreenManager& GetScreenManager() { return m_screenManager; }
+		const ScreenManager& GetScreenManager() const { return m_screenManager; }
 
+		ResourceManager& GetResourceManager() { return m_resourceManager; }
+		const ResourceManager& GetResourceManager() const { return m_resourceManager; }
+		
 	protected:
 		void Clear(const Color& color);
 
@@ -71,7 +73,6 @@ namespace KatanaEngine
 		bool InitializeAllegro();
 		int Shutdown();
 		void GameLoop();
-		void InitializeServices();
 
 	private:
 		std::unique_ptr<PlatformContext> m_pContext;
@@ -80,9 +81,7 @@ namespace KatanaEngine
 		InputState m_inputState;
 		SpriteBatch m_spriteBatch;
 		ResourceManager m_resourceManager;
-
-		// Optional services
-		std::unique_ptr<ScreenManager>   m_pScreenManager;
+		ScreenManager m_screenManager;
 
 		GameConfig m_config;
 

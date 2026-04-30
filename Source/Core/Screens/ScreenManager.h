@@ -3,29 +3,27 @@
 #include <memory>
 #include <vector>
 
+#include "Screen.h"
+#include "..\GameTime.h"
+#include "..\Resource\ResourceManager.h"
+#include "..\Graphics\SpriteBatch.h"
+
 namespace KatanaEngine
 {
 	class Game;
-	struct GameTime;
-	class InputState;
-	class ResourceManager;
-	class Screen;
-	class SpriteBatch;
 
 	class ScreenManager
 	{
 	public:
-		ScreenManager(Game& game, ResourceManager& resourceManager)
-			: m_game(game)
-			, m_resourceManager(resourceManager)
-		{ }
+
+		ScreenManager(Game* pGame);
 
 		~ScreenManager() = default;
 
 		ScreenManager(const ScreenManager&) = delete;
 		ScreenManager& operator=(const ScreenManager&) = delete;
 
-		Game& GetGame() const { return m_game; }
+		Game& GetGame() const { return *m_pGame; }
 
 		void AddScreen(std::shared_ptr<Screen> screen);
 		void RemoveScreen(std::shared_ptr<Screen> screen);
@@ -41,8 +39,9 @@ namespace KatanaEngine
 	private:
 		void ProcessPendingChanges();
 
-		Game& m_game;
-		ResourceManager& m_resourceManager;
+		Game* m_pGame = nullptr;
+		ResourceManager* m_pResourceManager = nullptr;
+
 		std::vector<std::shared_ptr<Screen>> m_screens;
 		std::vector<std::shared_ptr<Screen>> m_screensToAdd;
 		std::vector<std::shared_ptr<Screen>> m_screensToRemove;

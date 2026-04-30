@@ -26,6 +26,7 @@ namespace KatanaEngine
 	Game::Game(int argc, char** argv, const GameConfig& config)
 		: m_pContext(std::make_unique<PlatformContext>())
 		, m_resourceManager(config.ContentRoot)
+		, m_screenManager(this)
 		, m_config(config)
 	{
 		m_screenWidth = m_config.ScreenWidth;
@@ -35,12 +36,6 @@ namespace KatanaEngine
 	Game::~Game()
 	{
 		Shutdown();
-	}
-
-	void Game::InitializeServices()
-	{
-		if (!m_config.UseScreenManager) return;
-		m_pScreenManager = std::make_unique<ScreenManager>(*this, m_resourceManager);
 	}
 
 	void Game::SetScreenSize(int width, int height)
@@ -76,29 +71,83 @@ namespace KatanaEngine
 
 	bool Game::InitializeAllegro()
 	{
-		if (!al_init()) return false;
+		if (!al_init()) 
+		{
+			std::cerr << "ERROR: Failed to initialize Allegro core library" << std::endl;
+			return false;
+		}
 
 		al_init_font_addon();
 		al_init_ttf_addon();
 		al_init_primitives_addon();
 		al_init_image_addon();
 
-	al_install_keyboard();
-	al_install_mouse();
+		al_install_keyboard();
+		al_install_mouse();
 
-	// Set display flags to allow window resizing and programmable shaders
-	al_set_new_display_flags(ALLEGRO_WINDOWED | ALLEGRO_RESIZABLE | ALLEGRO_PROGRAMMABLE_PIPELINE);
+		// Set display flags to allow window resizing and programmable shaders
+		al_set_new_display_flags(ALLEGRO_WINDOWED | ALLEGRO_RESIZABLE | ALLEGRO_PROGRAMMABLE_PIPELINE);
 
-	m_pContext->pDisplay.reset(al_create_display(m_screenWidth, m_screenHeight));
-	if (!m_pContext->pDisplay) return false;
+		// Request OpenGL 2.0+ for shader support
+		al_set_new_display_option(ALLEGRO_OPENGL, 1, ALLEGRO_SUGGEST);
+		al_set_new_display_option(ALLEGRO_OPENGL_MAJOR_VERSION, 2, ALLEGRO_SUGGEST);
+		al_set_new_display_option(ALLEGRO_OPENGL_MINOR_VERSION, 0, ALLEGRO_SUGGEST);
+		al_set_new_display_option(ALLEGRO_DEPTH_SIZE, 24, ALLEGRO_SUGGEST);
+		al_set_new_display_option(ALLEGRO_SAMPLE_BUFFERS, 1, ALLEGRO_SUGGEST);
+		al_set_new_display_option(ALLEGRO_SAMPLES, 4, ALLEGRO_SUGGEST);
+
+		std::cout << "Attempting to create display with programmable pipeline (OpenGL 2.0+)..." << std::endl;
+		m_pContext->pDisplay.reset(al_create_display(m_screenWidth, m_screenHeight));
+
+		if (!m_pContext->pDisplay)
+		{
+			std::cerr << "WARNING: Failed to create display with programmable pipeline." << std::endl;
+			std::cerr << "This may be due to:" << std::endl;
+			std::cerr << "  - Outdated graphics drivers" << std::endl;
+			std::cerr << "  - Insufficient OpenGL support (need OpenGL 2.0+)" << std::endl;
+			std::cerr << "  - Graphics virtualization or remote desktop" << std::endl;
+			std::cerr << std::endl;
+			std::cerr << "Attempting fallback without shaders..." << std::endl;
+
+			// Try again without programmable pipeline
+			al_set_new_display_flags(ALLEGRO_WINDOWED | ALLEGRO_RESIZABLE);
+			al_set_new_display_option(ALLEGRO_OPENGL, 0, ALLEGRO_DONTCARE);
+			m_pContext->pDisplay.reset(al_create_display(m_screenWidth, m_screenHeight));
+
+			if (!m_pContext->pDisplay)
+			{
+				std::cerr << "ERROR: Failed to create display even without programmable pipeline!" << std::endl;
+				return false;
+			}
+
+			std::cout << "SUCCESS: Display created without shader support." << std::endl;
+			std::cout << "WARNING: Custom shaders will NOT work in this mode." << std::endl;
+		}
+		else
+		{
+			// Display created successfully with programmable pipeline
+			int opengl_version = al_get_display_option(m_pContext->pDisplay.get(), ALLEGRO_OPENGL_MAJOR_VERSION);
+			int opengl_minor = al_get_display_option(m_pContext->pDisplay.get(), ALLEGRO_OPENGL_MINOR_VERSION);
+			std::cout << "SUCCESS: Display created with programmable pipeline support." << std::endl;
+			std::cout << "OpenGL Version: " << opengl_version << "." << opengl_minor << std::endl;
+			std::cout << "Shader support: ENABLED" << std::endl;
+		}
 
 		al_set_window_title(m_pContext->pDisplay.get(), m_title.c_str());
 
 		m_pContext->pEventQueue.reset(al_create_event_queue());
-		if (!m_pContext->pEventQueue) return false;
+		if (!m_pContext->pEventQueue) 
+		{
+			std::cerr << "ERROR: Failed to create event queue" << std::endl;
+			return false;
+		}
 
 		m_pContext->pTimer.reset(al_create_timer(m_targetElapsedTime));
-		if (!m_pContext->pTimer) return false;
+		if (!m_pContext->pTimer) 
+		{
+			std::cerr << "ERROR: Failed to create timer" << std::endl;
+			return false;
+		}
 
 		al_register_event_source(m_pContext->pEventQueue.get(), al_get_display_event_source(m_pContext->pDisplay.get()));
 		al_register_event_source(m_pContext->pEventQueue.get(), al_get_timer_event_source(m_pContext->pTimer.get()));
@@ -113,7 +162,7 @@ namespace KatanaEngine
 		if (m_isInitialized) UnloadContent();
 
 		// Optional services
-		m_pScreenManager.reset();
+		m_screenManager.Clear();
 		m_resourceManager.ClearCache();
 
 		if (!m_pContext) return 1;
@@ -131,7 +180,6 @@ namespace KatanaEngine
 	{
 		if (!InitializeAllegro()) return 1;
 
-		InitializeServices();
 		LoadContent(m_resourceManager);
 		m_isInitialized = true;
 

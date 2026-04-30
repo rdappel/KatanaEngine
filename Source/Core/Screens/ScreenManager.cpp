@@ -6,6 +6,12 @@
 
 namespace KatanaEngine
 {
+	ScreenManager::ScreenManager(Game* pGame)
+		: m_pGame(pGame)
+		, m_pResourceManager(&pGame->GetResourceManager())
+	{ }
+
+
 	void ScreenManager::AddScreen(std::shared_ptr<Screen> screen)
 	{
 		if (!screen) return;
@@ -111,7 +117,7 @@ namespace KatanaEngine
 		for (auto& screen : m_screensToAdd)
 		{
 			screen->SetScreenManager(this);
-			screen->LoadContent(m_resourceManager);
+			screen->LoadContent(*m_pResourceManager);
 			m_screens.push_back(screen);
 		}
 		m_screensToAdd.clear();
