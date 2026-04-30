@@ -1,7 +1,8 @@
 ﻿#include "pch.h"
 
 #include "ResourceManager.h"
-#include "Core/Platform.h"
+
+#include "../Platform/Platform.h"
 #include "Core/Resource/Texture.h"
 #include "Core/Platform/PlatformTexture.h"
 #include "Core/Resource/Font.h"

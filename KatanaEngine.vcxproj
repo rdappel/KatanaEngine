@@ -231,7 +231,7 @@
     <ClInclude Include="Source\Core\Resource\ResourceManager.h" />
     <ClInclude Include="Source\Core\Game.h" />
     <ClInclude Include="Source\Core\GameTime.h" />
-    <ClInclude Include="Source\Core\Platform.h" />
+    <ClInclude Include="Source\Core\Platform\Platform.h" />
     <ClInclude Include="Source\Core\Platform\PlatformColor.h" />
     <ClInclude Include="Source\Core\Platform\PlatformContext.h" />
     <ClInclude Include="Source\Core\Graphics\SpriteBatch.h" />
