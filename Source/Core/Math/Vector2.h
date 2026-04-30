@@ -14,6 +14,7 @@ namespace KatanaEngine
 
         Vector2() : X(0.0f), Y(0.0f) {}
         Vector2(float x, float y) : X(x), Y(y) {}
+		Vector2(int x, int y) : X(static_cast<float>(x)), Y(static_cast<float>(y)) {}
 
         Vector2 operator+(const Vector2& other) const { return Vector2(X + other.X, Y + other.Y); }
         Vector2 operator-(const Vector2& other) const { return Vector2(X - other.X, Y - other.Y); }

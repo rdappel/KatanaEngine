@@ -26,6 +26,7 @@ namespace KatanaEngine
 	Game::Game(int argc, char** argv, const GameConfig& config)
 		: m_pContext(std::make_unique<PlatformContext>())
 		, m_resourceManager(config.ContentRoot)
+		, m_screenManager(this)
 		, m_config(config)
 	{
 		m_screenWidth = m_config.ScreenWidth;
@@ -35,12 +36,6 @@ namespace KatanaEngine
 	Game::~Game()
 	{
 		Shutdown();
-	}
-
-	void Game::InitializeServices()
-	{
-		if (!m_config.UseScreenManager) return;
-		m_pScreenManager = std::make_unique<ScreenManager>(*this, m_resourceManager);
 	}
 
 	void Game::SetScreenSize(int width, int height)
@@ -167,7 +162,7 @@ namespace KatanaEngine
 		if (m_isInitialized) UnloadContent();
 
 		// Optional services
-		m_pScreenManager.reset();
+		m_screenManager.Clear();
 		m_resourceManager.ClearCache();
 
 		if (!m_pContext) return 1;
@@ -185,7 +180,6 @@ namespace KatanaEngine
 	{
 		if (!InitializeAllegro()) return 1;
 
-		InitializeServices();
 		LoadContent(m_resourceManager);
 		m_isInitialized = true;
 

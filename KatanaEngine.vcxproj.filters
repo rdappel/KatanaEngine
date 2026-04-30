@@ -47,6 +47,8 @@
     <ClInclude Include="Source\Core\Interfaces\ICameraTarget.h" />
     <ClInclude Include="Source\Core\Camera.h" />
     <ClInclude Include="Source\Core\Interfaces\IRenderContext.h" />
+    <ClInclude Include="Source\Core\Save\SaveData.h" />
+    <ClInclude Include="Source\Core\Save\SaveManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\pch.cpp" />
@@ -76,6 +78,8 @@
     <ClCompile Include="Source\GUI\Checkbox.cpp" />
     <ClCompile Include="Source\GUI\Panel.cpp" />
     <ClCompile Include="Source\Core\Camera.cpp" />
+    <ClCompile Include="Source\Core\Save\SaveData.cpp" />
+    <ClCompile Include="Source\Core\Save\SaveManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="CLAUDE.md" />

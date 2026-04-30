@@ -203,6 +203,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Core\Save\SaveManager.h" />
+    <ClInclude Include="Source\Core\Save\SaveData.h" />
     <ClInclude Include="Source\Core\Interfaces\IRenderContext.h" />
     <ClInclude Include="Source\GUI\Checkbox.h" />
     <ClInclude Include="Source\GUI\Panel.h" />
@@ -251,6 +253,8 @@
     <ClInclude Include="Source\Core\Camera.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Core\Save\SaveManager.cpp" />
+    <ClCompile Include="Source\Core\Save\SaveData.cpp" />
     <ClCompile Include="Source\GUI\Checkbox.cpp" />
     <ClCompile Include="Source\GUI\Panel.cpp" />
     <ClCompile Include="Source\pch.cpp">
