@@ -8,8 +8,28 @@
 #include <iostream>
 #include <sstream>
 
+#ifdef _WIN32
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+#include <Windows.h>
+#endif
+
 namespace KatanaEngine
 {
+    namespace
+    {
+        void LogEffectError(const std::string& message)
+        {
+            std::cerr << message << "\n";
+
+#ifdef _WIN32
+            OutputDebugStringA(message.c_str());
+            OutputDebugStringA("\n");
+#endif
+        }
+    }
+
     void Effect::ShaderDeleter::operator()(ALLEGRO_SHADER* shader) const
     {
         if (shader)
@@ -36,7 +56,7 @@ namespace KatanaEngine
         std::ifstream file(path);
         if (!file.is_open())
         {
-            std::cerr << "Effect: failed to open file: " << path << "\n";
+            LogEffectError("Effect: failed to open file: " + path);
             return false;
         }
 
@@ -115,7 +135,7 @@ namespace KatanaEngine
             const char* defaultVertex = al_get_default_shader_source(ALLEGRO_SHADER_AUTO, ALLEGRO_VERTEX_SHADER);
             if (!defaultVertex)
             {
-                std::cerr << "Effect: no default vertex shader available for: " << path << "\n";
+                LogEffectError("Effect: no default vertex shader available for: " + path);
                 return false;
             }
 
@@ -127,7 +147,7 @@ namespace KatanaEngine
             const char* defaultPixel = al_get_default_shader_source(ALLEGRO_SHADER_AUTO, ALLEGRO_PIXEL_SHADER);
             if (!defaultPixel)
             {
-                std::cerr << "Effect: no default pixel shader available for: " << path << "\n";
+                LogEffectError("Effect: no default pixel shader available for: " + path);
                 return false;
             }
 
@@ -137,30 +157,30 @@ namespace KatanaEngine
         m_shader.reset(al_create_shader(ALLEGRO_SHADER_AUTO));
         if (!m_shader)
         {
-            std::cerr << "Effect: failed to create shader for: " << path << "\n";
+            LogEffectError("Effect: failed to create shader for: " + path);
             return false;
         }
 
         if (!al_attach_shader_source(m_shader.get(), ALLEGRO_VERTEX_SHADER, vertexSource.c_str()))
         {
-            std::cerr << "Effect: vertex shader compile failed for: " << path << "\n";
-            std::cerr << al_get_shader_log(m_shader.get()) << "\n";
+            LogEffectError("Effect: vertex shader compile failed for: " + path);
+            LogEffectError(al_get_shader_log(m_shader.get()));
             m_shader.reset();
             return false;
         }
 
         if (!al_attach_shader_source(m_shader.get(), ALLEGRO_PIXEL_SHADER, pixelSource.c_str()))
         {
-            std::cerr << "Effect: pixel shader compile failed for: " << path << "\n";
-            std::cerr << al_get_shader_log(m_shader.get()) << "\n";
+            LogEffectError("Effect: pixel shader compile failed for: " + path);
+            LogEffectError(al_get_shader_log(m_shader.get()));
             m_shader.reset();
             return false;
         }
 
         if (!al_build_shader(m_shader.get()))
         {
-            std::cerr << "Effect: shader link failed for: " << path << "\n";
-            std::cerr << al_get_shader_log(m_shader.get()) << "\n";
+            LogEffectError("Effect: shader link failed for: " + path);
+            LogEffectError(al_get_shader_log(m_shader.get()));
             m_shader.reset();
             return false;
         }

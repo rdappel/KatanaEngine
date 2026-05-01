@@ -19,6 +19,7 @@ namespace KatanaEngine
 		virtual ~Menu() = default;
 
 		std::function<void(Menu&, int, int)> OnFocusChanged;
+		std::function<void(Menu&)> OnSelect;
 
 		void AddItem(const std::shared_ptr<MenuItem>& item);
 
@@ -36,8 +37,8 @@ namespace KatanaEngine
 		bool FocusNext();
 		bool FocusPrevious();
 		void SelectFocused();
-		void HandleInput(const InputState& inputState);
 
+		virtual void HandleInput(const InputState& inputState);
 		virtual void Update(const GameTime& gameTime);
 		virtual void Draw(SpriteBatch& spriteBatch) = 0;
 

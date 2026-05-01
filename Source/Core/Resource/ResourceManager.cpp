@@ -14,8 +14,30 @@
 
 #include <allegro5/allegro_audio.h>
 
+#include <cassert>
+
+#ifdef _WIN32
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+#include <Windows.h>
+#endif
+
 namespace KatanaEngine
 {
+    namespace
+    {
+        void LogResourceError(const std::string& message)
+        {
+            std::cerr << message << "\n";
+
+#ifdef _WIN32
+            OutputDebugStringA(message.c_str());
+            OutputDebugStringA("\n");
+#endif
+        }
+    }
+
     ResourceManager::ResourceManager(const std::string& contentRoot)
         : m_contentRoot(Platform::GetExecutableDirectory() + contentRoot)
     { }
@@ -144,6 +166,8 @@ namespace KatanaEngine
         auto effect = std::shared_ptr<Effect>(new Effect());
         if (!effect->LoadFromFile(fullPath))
         {
+            LogResourceError("ResourceManager: failed to load effect: " + fullPath);
+            assert(false && "ResourceManager failed to load Effect. See Output window for shader compile details.");
             return nullptr;
         }
 

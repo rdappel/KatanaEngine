@@ -96,12 +96,11 @@ namespace KatanaEngine
 
 	void Menu::SelectFocused()
 	{
-		if (m_selectedIndex < 0 || m_selectedIndex >= static_cast<int>(m_items.size()))
-		{
-			return;
-		}
+		if (m_selectedIndex < 0 || m_selectedIndex >= static_cast<int>(m_items.size())) return;
 
 		m_items[m_selectedIndex]->Select();
+
+		if (OnSelect) OnSelect(*this);
 	}
 
 	void Menu::HandleInput(const InputState& inputState)
