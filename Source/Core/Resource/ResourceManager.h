@@ -11,6 +11,8 @@ namespace KatanaEngine
     class Font;
     class AnimationSet;
     class Effect;
+    class Sound;
+    class Music;
 
     class ResourceManager
     {
@@ -37,4 +39,6 @@ namespace KatanaEngine
     template<> std::shared_ptr<Font> ResourceManager::Load<Font>(const std::string& path);
     template<> std::shared_ptr<AnimationSet> ResourceManager::Load<AnimationSet>(const std::string& path);
     template<> std::shared_ptr<Effect> ResourceManager::Load<Effect>(const std::string& path);
+    template<> std::shared_ptr<Sound> ResourceManager::Load<Sound>(const std::string& path);
+    template<> std::shared_ptr<Music> ResourceManager::Load<Music>(const std::string& path);
 }

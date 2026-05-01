@@ -29,6 +29,7 @@ namespace KatanaEngine
 		void RemoveScreen(std::shared_ptr<Screen> screen);
 		void RemoveScreen(Screen* screen);
 		void Clear();
+		void ClearImmediate();
 
 		void HandleInput(const InputState& inputState);
 		void Update(const GameTime& gameTime);

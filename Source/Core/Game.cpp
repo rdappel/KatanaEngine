@@ -20,6 +20,8 @@
 #include <allegro5/allegro_ttf.h>
 #include <allegro5/allegro_image.h>
 #include <allegro5/allegro_primitives.h>
+#include <allegro5/allegro_audio.h>
+#include <allegro5/allegro_acodec.h>
 
 namespace KatanaEngine
 {
@@ -81,6 +83,21 @@ namespace KatanaEngine
 		al_init_ttf_addon();
 		al_init_primitives_addon();
 		al_init_image_addon();
+		if (!al_install_audio())
+		{
+			std::cerr << "ERROR: Failed to install Allegro audio" << std::endl;
+			return false;
+		}
+		if (!al_init_acodec_addon())
+		{
+			std::cerr << "ERROR: Failed to initialize Allegro audio codecs" << std::endl;
+			return false;
+		}
+		if (!al_reserve_samples(32))
+		{
+			std::cerr << "ERROR: Failed to reserve Allegro audio samples" << std::endl;
+			return false;
+		}
 
 		al_install_keyboard();
 		al_install_mouse();
@@ -162,7 +179,7 @@ namespace KatanaEngine
 		if (m_isInitialized) UnloadContent();
 
 		// Optional services
-		m_screenManager.Clear();
+		m_screenManager.ClearImmediate();
 		m_resourceManager.ClearCache();
 
 		if (!m_pContext) return 1;

@@ -8,7 +8,9 @@ namespace KatanaEngine
 {
     class SaveManager
     {
+
     public:
+
         void Register(ISaveable* saveable);
         void Unregister(ISaveable* saveable);
 
@@ -16,6 +18,8 @@ namespace KatanaEngine
         void LoadSave(const SaveData& data);
 
     private:
+
         std::vector<ISaveable*> m_saveables;
+
     };
 }

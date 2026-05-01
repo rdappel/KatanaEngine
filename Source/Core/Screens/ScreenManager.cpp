@@ -44,6 +44,21 @@ namespace KatanaEngine
 		}
 	}
 
+	void ScreenManager::ClearImmediate()
+	{
+		m_screensToAdd.clear();
+		m_screensToRemove.clear();
+
+		for (auto& screen : m_screens)
+		{
+			screen->NotifyRemoved();
+			screen->UnloadContent();
+			screen->SetScreenManager(nullptr);
+		}
+
+		m_screens.clear();
+	}
+
 	void ScreenManager::HandleInput(const InputState& inputState)
 	{
 		ProcessPendingChanges();
@@ -99,9 +114,13 @@ namespace KatanaEngine
 
 	void ScreenManager::ProcessPendingChanges()
 	{
+		std::vector<std::shared_ptr<Screen>> screensToRemove;
+		screensToRemove.swap(m_screensToRemove);
+
 		// Process removals
-		for (auto& screen : m_screensToRemove)
+		for (auto& screen : screensToRemove)
 		{
+			screen->NotifyRemoved();
 			screen->UnloadContent();
 			screen->SetScreenManager(nullptr);
 
@@ -111,15 +130,20 @@ namespace KatanaEngine
 				m_screens.erase(it);
 			}
 		}
-		m_screensToRemove.clear();
+
+		std::vector<std::shared_ptr<Screen>> screensToAdd;
+		screensToAdd.swap(m_screensToAdd);
 
 		// Process additions
-		for (auto& screen : m_screensToAdd)
+		for (auto& screen : screensToAdd)
 		{
 			screen->SetScreenManager(this);
 			screen->LoadContent(*m_pResourceManager);
 			m_screens.push_back(screen);
+			if (screen->ShouldShowOnAdd())
+			{
+				screen->Show();
+			}
 		}
-		m_screensToAdd.clear();
 	}
 }

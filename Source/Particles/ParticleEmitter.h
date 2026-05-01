@@ -26,7 +26,8 @@ namespace KatanaEngine
 				"TParticle must derive from Particle");
 
 		public:
-			explicit ParticleEmitter(const EmitterConfig& config = EmitterConfig())
+			
+			ParticleEmitter(const EmitterConfig& config = EmitterConfig())
 				: m_config(config)
 				, m_position(Vector2::ZERO)
 				, m_emissionAccumulator(0.0f)
@@ -36,16 +37,13 @@ namespace KatanaEngine
 				m_particles.resize(config.MaxParticles);
 			}
 
-			// Position
 			void SetPosition(const Vector2& position) { m_position = position; }
 			const Vector2& GetPosition() const { return m_position; }
 
-			// Emission control
 			void Start() { m_isEmitting = true; m_age = 0.0f; }
 			void Stop() { m_isEmitting = false; }
 			bool IsEmitting() const { return m_isEmitting; }
 
-			// Behavior management
 			void AddInitializer(std::shared_ptr<IParticleInitializer> initializer)
 			{
 				m_initializers.push_back(initializer);
@@ -61,10 +59,8 @@ namespace KatanaEngine
 				m_drawer = drawer;
 			}
 
-			// Lifecycle
 			void Update(const GameTime& gameTime)
 			{
-				// Update emitter age
 				float deltaTime = static_cast<float>(gameTime.ElapsedTime);
 				m_age += deltaTime;
 				if (!m_config.IsLooping && m_age >= m_config.Duration)
@@ -72,13 +68,8 @@ namespace KatanaEngine
 					m_isEmitting = false;
 				}
 
-				// Emit new particles
-				if (m_isEmitting)
-				{
-					EmitParticles(deltaTime);
-				}
+				if (m_isEmitting) EmitParticles(deltaTime);
 
-				// Update existing particles
 				for (auto& particle : m_particles)
 				{
 					if (!particle.IsAlive) continue;
@@ -102,7 +93,6 @@ namespace KatanaEngine
 				}
 			}
 
-			// Query
 			int GetActiveParticleCount() const
 			{
 				int count = 0;
@@ -115,7 +105,6 @@ namespace KatanaEngine
 
 			int GetMaxParticles() const { return m_config.MaxParticles; }
 
-			// Manual emission
 			void Emit(int count = 1)
 			{
 				for (int i = 0; i < count; ++i)
@@ -128,13 +117,8 @@ namespace KatanaEngine
 				}
 			}
 
-			// Burst emission (ignores emission rate)
-			void Burst(int count)
-			{
-				Emit(count);
-			}
+			void Burst(int count) { Emit(count); }
 
-			// Kill all particles
 			void Clear()
 			{
 				for (auto& particle : m_particles)
@@ -143,9 +127,8 @@ namespace KatanaEngine
 				}
 			}
 
-
-
 		private:
+
 			void EmitParticles(float deltaTime)
 			{
 				m_emissionAccumulator += m_config.EmissionRate * deltaTime;
@@ -178,7 +161,6 @@ namespace KatanaEngine
 				}
 			}
 
-		private:
 			EmitterConfig m_config;
 			Vector2 m_position;
 

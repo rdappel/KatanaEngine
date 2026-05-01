@@ -9,6 +9,10 @@
 #include "Core/Platform/PlatformFont.h"
 #include "Core/Resource/AnimationSet.h"
 #include "Core/Resource/Effect.h"
+#include "Core/Resource/Sound.h"
+#include "Core/Resource/Music.h"
+
+#include <allegro5/allegro_audio.h>
 
 namespace KatanaEngine
 {
@@ -145,5 +149,55 @@ namespace KatanaEngine
 
         m_resourceCache[cacheKey] = effect;
         return effect;
+    }
+
+    template<>
+    std::shared_ptr<Sound> ResourceManager::Load<Sound>(const std::string& path)
+    {
+        std::string cacheKey = MakeCacheKey(typeid(Sound), path);
+
+        auto it = m_resourceCache.find(cacheKey);
+        if (it != m_resourceCache.end())
+        {
+            return std::static_pointer_cast<Sound>(it->second);
+        }
+
+        std::string fullPath = MakeFullPath(path);
+
+        auto sound = std::shared_ptr<Sound>(new Sound());
+        sound->SetSample(al_load_sample(fullPath.c_str()));
+
+        if (!sound->IsValid())
+        {
+            std::cerr << "ResourceManager: failed to load sound: " << fullPath << "\n";
+            return nullptr;
+        }
+
+        m_resourceCache[cacheKey] = sound;
+        return sound;
+    }
+
+    template<>
+    std::shared_ptr<Music> ResourceManager::Load<Music>(const std::string& path)
+    {
+        std::string cacheKey = MakeCacheKey(typeid(Music), path);
+
+        auto it = m_resourceCache.find(cacheKey);
+        if (it != m_resourceCache.end())
+        {
+            return std::static_pointer_cast<Music>(it->second);
+        }
+
+        std::string fullPath = MakeFullPath(path);
+
+        auto music = std::shared_ptr<Music>(new Music());
+        if (!music->LoadFromFile(fullPath))
+        {
+            std::cerr << "ResourceManager: failed to load music: " << fullPath << "\n";
+            return nullptr;
+        }
+
+        m_resourceCache[cacheKey] = music;
+        return music;
     }
 }

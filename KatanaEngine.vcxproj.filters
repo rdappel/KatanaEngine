@@ -9,6 +9,9 @@
     <ClInclude Include="Source\Core\Resource\ResourceManager.h" />
     <ClInclude Include="Source\Core\Graphics\Color.h" />
     <ClInclude Include="Source\Core\Platform\PlatformColor.h" />
+    <ClInclude Include="Source\Core\Screens\ColorFadeScreen.h" />
+    <ClInclude Include="Source\Core\Screens\Menu.h" />
+    <ClInclude Include="Source\Core\Screens\MenuItem.h" />
     <ClInclude Include="Source\Core\Screens\Screen.h" />
     <ClInclude Include="Source\Core\Screens\ScreenManager.h" />
     <ClInclude Include="Source\Core\Input\InputState.h" />
@@ -25,6 +28,9 @@
     <ClInclude Include="Source\Core\Resource\Animation.h" />
     <ClInclude Include="Source\Core\Resource\AnimationSet.h" />
     <ClInclude Include="Source\Core\Resource\Effect.h" />
+    <ClInclude Include="Source\Core\Resource\Music.h" />
+    <ClInclude Include="Source\Core\Resource\Resource.h" />
+    <ClInclude Include="Source\Core\Resource\Sound.h" />
     <ClInclude Include="Source\Core\Resource\TextResource.h" />
     <ClInclude Include="Source\Core\Platform\PlatformInput.h" />
     <ClInclude Include="Source\Core\Math\Line.h" />
@@ -55,6 +61,9 @@
     <ClCompile Include="Source\Core\Game.cpp" />
     <ClCompile Include="Source\Core\Resource\ResourceManager.cpp" />
     <ClCompile Include="Source\Core\Graphics\Color.cpp" />
+    <ClCompile Include="Source\Core\Screens\ColorFadeScreen.cpp" />
+    <ClCompile Include="Source\Core\Screens\Menu.cpp" />
+    <ClCompile Include="Source\Core\Screens\MenuItem.cpp" />
     <ClCompile Include="Source\Core\Screens\Screen.cpp" />
     <ClCompile Include="Source\Core\Screens\ScreenManager.cpp" />
     <ClCompile Include="Source\Core\Input\InputState.cpp" />
@@ -67,6 +76,8 @@
     <ClCompile Include="Source\Core\Resource\Animation.cpp" />
     <ClCompile Include="Source\Core\Resource\AnimationSet.cpp" />
     <ClCompile Include="Source\Core\Resource\Effect.cpp" />
+    <ClCompile Include="Source\Core\Resource\Music.cpp" />
+    <ClCompile Include="Source\Core\Resource\Sound.cpp" />
     <ClCompile Include="Source\Core\Math\Line.cpp" />
     <ClCompile Include="Source\Core\Math\Spline.cpp" />
     <ClCompile Include="Source\Core\Math\Circle.cpp" />
