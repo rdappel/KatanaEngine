@@ -73,6 +73,7 @@ namespace KatanaEngine
 		bool InitializeAllegro();
 		int Shutdown();
 		void GameLoop();
+		void UpdateScreenSizeFromDisplay();
 
 	private:
 		std::unique_ptr<PlatformContext> m_pContext;

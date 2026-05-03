@@ -47,6 +47,7 @@ namespace KatanaEngine
 
 		if (!m_pContext || !m_pContext->pDisplay) return;
 		al_resize_display(m_pContext->pDisplay.get(), width, height);
+		UpdateScreenSizeFromDisplay();
 	}
 
 	void Game::SetTitle(const std::string& title)
@@ -69,6 +70,17 @@ namespace KatanaEngine
 	void Game::Clear(const Color& color)
 	{
 		al_clear_to_color(ToAllegroColor(color));
+	}
+
+	void Game::UpdateScreenSizeFromDisplay()
+	{
+		if (!m_pContext || !m_pContext->pDisplay)
+		{
+			return;
+		}
+
+		m_screenWidth = al_get_display_width(m_pContext->pDisplay.get());
+		m_screenHeight = al_get_display_height(m_pContext->pDisplay.get());
 	}
 
 	bool Game::InitializeAllegro()
@@ -102,8 +114,12 @@ namespace KatanaEngine
 		al_install_keyboard();
 		al_install_mouse();
 
-		// Set display flags to allow window resizing and programmable shaders
-		al_set_new_display_flags(ALLEGRO_WINDOWED | ALLEGRO_RESIZABLE | ALLEGRO_PROGRAMMABLE_PIPELINE);
+		const int baseDisplayFlags = m_config.Fullscreen
+			? ALLEGRO_FULLSCREEN_WINDOW
+			: (ALLEGRO_WINDOWED | ALLEGRO_RESIZABLE);
+
+		// Set display flags before creating the display.
+		al_set_new_display_flags(baseDisplayFlags | ALLEGRO_PROGRAMMABLE_PIPELINE);
 
 		// Request OpenGL 2.0+ for shader support
 		al_set_new_display_option(ALLEGRO_OPENGL, 1, ALLEGRO_SUGGEST);
@@ -127,7 +143,7 @@ namespace KatanaEngine
 			std::cerr << "Attempting fallback without shaders..." << std::endl;
 
 			// Try again without programmable pipeline
-			al_set_new_display_flags(ALLEGRO_WINDOWED | ALLEGRO_RESIZABLE);
+			al_set_new_display_flags(baseDisplayFlags);
 			al_set_new_display_option(ALLEGRO_OPENGL, 0, ALLEGRO_DONTCARE);
 			m_pContext->pDisplay.reset(al_create_display(m_screenWidth, m_screenHeight));
 
@@ -150,6 +166,7 @@ namespace KatanaEngine
 			std::cout << "Shader support: ENABLED" << std::endl;
 		}
 
+		UpdateScreenSizeFromDisplay();
 		al_set_window_title(m_pContext->pDisplay.get(), m_title.c_str());
 
 		m_pContext->pEventQueue.reset(al_create_event_queue());
@@ -223,9 +240,8 @@ namespace KatanaEngine
 			}
 			else if (event.type == ALLEGRO_EVENT_DISPLAY_RESIZE)
 			{
-				m_screenWidth = event.display.width;
-				m_screenHeight = event.display.height;
 				al_acknowledge_resize(m_pContext->pDisplay.get());
+				UpdateScreenSizeFromDisplay();
 			}
 			else if (event.type == ALLEGRO_EVENT_TIMER)
 			{

@@ -157,6 +157,8 @@ namespace KatanaEngine
         std::shared_ptr<Effect> m_effect;
         ALLEGRO_SHADER* m_previousShader = nullptr;
         Vector2 m_viewOffset = Vector2::ZERO;
+        float m_zoom = 1.0f;
+        float m_savedTransform[16] = {}; // stores ALLEGRO_TRANSFORM when zoom != 1
         bool m_hasBegun;
     };
 }

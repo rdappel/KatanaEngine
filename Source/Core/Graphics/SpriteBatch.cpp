@@ -51,6 +51,7 @@ namespace KatanaEngine
 
     void SpriteBatch::Begin(SpriteSortMode sortMode, BlendState blendState, const std::shared_ptr<Effect>& effect, const IRenderContext* renderContext)
     {
+        m_zoom = renderContext ? renderContext->GetZoom() : 1.0f;
         Begin(sortMode, blendState, effect, renderContext ? renderContext->GetSnappedViewOffset() : Vector2::ZERO);
     }
 
@@ -71,6 +72,16 @@ namespace KatanaEngine
         if (m_effect && m_effect->IsValid())
         {
             m_effect->Apply();
+        }
+
+        if (m_zoom != 1.0f)
+        {
+            al_copy_transform(reinterpret_cast<ALLEGRO_TRANSFORM*>(m_savedTransform),
+                              al_get_current_transform());
+            ALLEGRO_TRANSFORM zoomT;
+            al_identity_transform(&zoomT);
+            al_scale_transform(&zoomT, m_zoom, m_zoom);
+            al_use_transform(&zoomT);
         }
 
         if (sortMode != SpriteSortMode::IMMEDIATE)
@@ -95,6 +106,13 @@ namespace KatanaEngine
         m_previousShader = nullptr;
         m_effect.reset();
         m_viewOffset = Vector2::ZERO;
+
+        if (m_zoom != 1.0f)
+        {
+            al_use_transform(reinterpret_cast<const ALLEGRO_TRANSFORM*>(m_savedTransform));
+            m_zoom = 1.0f;
+        }
+
         m_hasBegun = false;
     }
 
@@ -295,6 +313,8 @@ namespace KatanaEngine
             flags |= ALLEGRO_FLIP_VERTICAL;
 
         Vector2 drawPosition = sprite.position - m_viewOffset;
+        drawPosition.X = std::roundf(drawPosition.X);
+        drawPosition.Y = std::roundf(drawPosition.Y);
 
         al_draw_tinted_scaled_rotated_bitmap_region(bitmap,
             sx, sy, sw, sh,

@@ -18,6 +18,10 @@ namespace KatanaEngine
 		void SetTarget(const ICameraTarget* target);
 		void SetBounds(const IBounded* bounds);
 
+		void ZoomIn();
+		void ZoomOut();
+		float GetZoom() const override { return m_zoom; }
+
 		void Update();
 
 		Vector2 GetPosition() const { return m_viewPosition; }
@@ -26,15 +30,20 @@ namespace KatanaEngine
 
 		Vector2 GetViewOffset() const override { return m_viewPosition; }
 		Vector2 GetSnappedViewOffset() const override;
-		Vector2 WorldToScreen(const Vector2& worldPosition) const;
-		Vector2 ScreenToWorld(const Vector2& screenPosition) const;
+		Vector2 WorldToScreen(const Vector2& worldPosition) const override;
+		Vector2 ScreenToWorld(const Vector2& screenPosition) const override;
 
 	private:
 		void ClampToBounds();
+
+		static constexpr float k_zoomLevels[] = { 0.24f, 0.50f, 1.00f, 1.50f, 2.00f };
+		static constexpr int k_defaultZoomIndex = 4; // 200%
 
 		Vector2 m_viewPosition;
 		Vector2 m_viewportSize;
 		const ICameraTarget* m_pTarget = nullptr;
 		const IBounded* m_pBounds = nullptr;
+		int m_zoomIndex = k_defaultZoomIndex;
+		float m_zoom = k_zoomLevels[k_defaultZoomIndex];
 	};
 }

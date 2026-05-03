@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Camera.h"
+#include <iterator>
 
 namespace KatanaEngine
 {
@@ -36,23 +37,41 @@ namespace KatanaEngine
 			static_cast<float>(std::round(m_viewPosition.Y)));
 	}
 
+	void Camera::ZoomIn()
+	{
+		if (m_zoomIndex < static_cast<int>(std::size(k_zoomLevels)) - 1)
+		{
+			++m_zoomIndex;
+			m_zoom = k_zoomLevels[m_zoomIndex];
+		}
+	}
+
+	void Camera::ZoomOut()
+	{
+		if (m_zoomIndex > 0)
+		{
+			--m_zoomIndex;
+			m_zoom = k_zoomLevels[m_zoomIndex];
+		}
+	}
+
 	void Camera::Update()
 	{
 		if (!m_pTarget) return;
 
 		Vector2 targetPosition = m_pTarget->GetPosition();
-		m_viewPosition = targetPosition - (m_viewportSize * 0.5f);
+		m_viewPosition = targetPosition - (m_viewportSize * 0.5f / m_zoom);
 		ClampToBounds();
 	}
 
 	Vector2 Camera::WorldToScreen(const Vector2& worldPosition) const
 	{
-		return worldPosition - m_viewPosition;
+		return (worldPosition - m_viewPosition) * m_zoom;
 	}
 
 	Vector2 Camera::ScreenToWorld(const Vector2& screenPosition) const
 	{
-		return screenPosition + m_viewPosition;
+		return screenPosition / m_zoom + m_viewPosition;
 	}
 
 	void Camera::ClampToBounds()
@@ -62,25 +81,28 @@ namespace KatanaEngine
 		Rectangle bounds = m_pBounds->GetBounds();
 		if (bounds.Width <= 0.0f || bounds.Height <= 0.0f) return;
 
-		if (bounds.Width <= m_viewportSize.X)
+		float effectiveW = m_viewportSize.X / m_zoom;
+		float effectiveH = m_viewportSize.Y / m_zoom;
+
+		if (bounds.Width <= effectiveW)
 		{
-			m_viewPosition.X = bounds.GetCenter().X - (m_viewportSize.X * 0.5f);
+			m_viewPosition.X = bounds.GetCenter().X - (effectiveW * 0.5f);
 		}
 		else
 		{
 			float minX = bounds.X;
-			float maxX = bounds.X + bounds.Width - m_viewportSize.X;
+			float maxX = bounds.X + bounds.Width - effectiveW;
 			m_viewPosition.X = Math::Clamp(m_viewPosition.X, minX, maxX);
 		}
 
-		if (bounds.Height <= m_viewportSize.Y)
+		if (bounds.Height <= effectiveH)
 		{
-			m_viewPosition.Y = bounds.GetCenter().Y - (m_viewportSize.Y * 0.5f);
+			m_viewPosition.Y = bounds.GetCenter().Y - (effectiveH * 0.5f);
 		}
 		else
 		{
 			float minY = bounds.Y;
-			float maxY = bounds.Y + bounds.Height - m_viewportSize.Y;
+			float maxY = bounds.Y + bounds.Height - effectiveH;
 			m_viewPosition.Y = Math::Clamp(m_viewPosition.Y, minY, maxY);
 		}
 	}
