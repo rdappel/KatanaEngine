@@ -16,12 +16,20 @@ namespace KatanaEngine
 	struct PlatformContext;
 	struct Color;
 
+	enum class GraphicsBackend
+	{
+		Unknown,
+		OpenGL,
+		Direct3D
+	};
+
 	struct GameConfig
 	{
 		std::string ContentRoot = "../../../Content/";
 		int ScreenWidth = 1600;
 		int ScreenHeight = 900;
 		bool Fullscreen = false;
+		bool PreferDirect3D = false;  // On Windows, prefer D3D over OpenGL
 	};
 
 	class Game
@@ -60,6 +68,8 @@ namespace KatanaEngine
 
 		ResourceManager& GetResourceManager() { return m_resourceManager; }
 		const ResourceManager& GetResourceManager() const { return m_resourceManager; }
+
+		GraphicsBackend GetGraphicsBackend() const { return m_graphicsBackend; }
 		
 	protected:
 		void Clear(const Color& color);
@@ -97,6 +107,8 @@ namespace KatanaEngine
 		double m_totalTime = 0.0;
 		double m_accumulatedTime = 0.0;
 		double m_previousTime = 0.0;
+
+		GraphicsBackend m_graphicsBackend = GraphicsBackend::Unknown;
 
 		bool m_isRunning = false;
 		bool m_isInitialized = false;

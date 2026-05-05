@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 
 #include "ResourceManager.h"
+#include "Core/Game.h"
 
 #include "../Platform/Platform.h"
 #include "Core/Resource/Texture.h"
@@ -12,7 +13,9 @@
 #include "Core/Resource/Sound.h"
 #include "Core/Resource/Music.h"
 
+#include <allegro5/allegro.h>
 #include <allegro5/allegro_audio.h>
+#include <allegro5/path.h>
 
 #include <cassert>
 
@@ -39,23 +42,96 @@ namespace KatanaEngine
     }
 
     ResourceManager::ResourceManager(const std::string& contentRoot)
-        : m_contentRoot(Platform::GetExecutableDirectory() + contentRoot)
-    { }
+    { 
+        // Build the full content path
+        std::string basePath = Platform::GetExecutableDirectory() + contentRoot;
+        std::cout << "Base path before canonicalization: " << basePath << std::endl;
+
+        // Manual path resolution: resolve .. segments ourselves
+        ALLEGRO_PATH* path = al_create_path(basePath.c_str());
+        if (path)
+        {
+            // Get the number of directory components
+            int componentCount = al_get_path_num_components(path);
+
+            // Build a new path by processing components and removing .. references
+            ALLEGRO_PATH* resolvedPath = al_create_path("");
+
+            for (int i = 0; i < componentCount; ++i)
+            {
+                const char* component = al_get_path_component(path, i);
+
+                if (strcmp(component, "..") == 0)
+                {
+                    // Remove the last directory from resolvedPath
+                    int resolvedCount = al_get_path_num_components(resolvedPath);
+                    if (resolvedCount > 0)
+                    {
+                        al_remove_path_component(resolvedPath, resolvedCount - 1);
+                    }
+                }
+                else if (strcmp(component, ".") != 0)
+                {
+                    // Add this component (skip "." as it means current directory)
+                    al_append_path_component(resolvedPath, component);
+                }
+            }
+
+            // Preserve the filename if there was one
+            const char* filename = al_get_path_filename(path);
+            if (filename && strlen(filename) > 0)
+            {
+                al_set_path_filename(resolvedPath, filename);
+            }
+
+            // Get the drive (important for Windows absolute paths)
+            const char* drive = al_get_path_drive(path);
+            if (drive && strlen(drive) > 0)
+            {
+                al_set_path_drive(resolvedPath, drive);
+            }
+
+            m_contentRoot = al_path_cstr(resolvedPath, ALLEGRO_NATIVE_PATH_SEP);
+            std::cout << "Content root resolved to: " << m_contentRoot << std::endl;
+
+            al_destroy_path(resolvedPath);
+            al_destroy_path(path);
+        }
+        else
+        {
+            m_contentRoot = basePath; // Fallback
+            std::cerr << "WARNING: Failed to create Allegro path object" << std::endl;
+        }
+    }
 
     std::string ResourceManager::MakeFullPath(const std::string& path) const
     {
-        if (m_contentRoot.empty())
-        {
-            return path;
-        }
+        if (m_contentRoot.empty()) return path;
 
-        // Check if contentRoot ends with separator
+        // Build the combined path
+        std::string fullPath;
         char lastChar = m_contentRoot.back();
         if (lastChar == '/' || lastChar == '\\')
         {
-            return m_contentRoot + path;
+            fullPath = m_contentRoot + path;
         }
-        return m_contentRoot + "/" + path;
+        else
+        {
+            fullPath = m_contentRoot + "/" + path;
+        }
+
+        // Canonicalize the final path to resolve any remaining .. or . segments
+        ALLEGRO_PATH* alPath = al_create_path(fullPath.c_str());
+        if (alPath)
+        {
+            if (al_make_path_canonical(alPath))
+            {
+                fullPath = al_path_cstr(alPath, ALLEGRO_NATIVE_PATH_SEP);
+            }
+            al_destroy_path(alPath);
+        }
+
+        return fullPath;
     }
 
     std::string ResourceManager::MakeCacheKey(std::type_index type, const std::string& path) const
@@ -161,15 +237,50 @@ namespace KatanaEngine
             return std::static_pointer_cast<Effect>(it->second);
         }
 
-        std::string fullPath = MakeFullPath(path);
+        // Determine shader path based on graphics backend
+        std::string shaderPath = path;
+
+        if (m_pGame)
+        {
+            GraphicsBackend backend = m_pGame->GetGraphicsBackend();
+
+            // Replace "Effects/" with backend-specific folder
+            if (path.find("Effects/") == 0)
+            {
+                std::string filename = path.substr(8); // Remove "Effects/"
+
+                switch (backend)
+                {
+                    case GraphicsBackend::Direct3D:
+                        shaderPath = "Effects/HLSL/" + filename;
+                        std::cout << "Loading Direct3D shader: " << shaderPath << std::endl;
+                        break;
+
+                    case GraphicsBackend::OpenGL:
+                        shaderPath = "Effects/GLSL/" + filename;
+                        std::cout << "Loading OpenGL shader: " << shaderPath << std::endl;
+                        break;
+
+                    default:
+                        LogResourceError("WARNING: No shader support, effect will not load");
+                        return nullptr;
+                }
+            }
+        }
+
+        std::string fullPath = MakeFullPath(shaderPath);
+        std::cout << "Full shader path resolved to: " << fullPath << std::endl;
 
         auto effect = std::shared_ptr<Effect>(new Effect());
         if (!effect->LoadFromFile(fullPath))
         {
             LogResourceError("ResourceManager: failed to load effect: " + fullPath);
-            assert(false && "ResourceManager failed to load Effect. See Output window for shader compile details.");
+            // Don't assert - just log and return null for graceful degradation
+            LogResourceError("WARNING: Shader failed to load. Continuing without effect.");
             return nullptr;
         }
+
+        std::cout << "Successfully loaded effect: " << shaderPath << std::endl;
 
         m_resourceCache[cacheKey] = effect;
         return effect;

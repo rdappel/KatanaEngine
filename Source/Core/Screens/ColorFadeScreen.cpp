@@ -49,6 +49,10 @@ namespace KatanaEngine
 	void ColorFadeScreen::LoadContent(ResourceManager& resourceManager)
 	{
 		m_fadeEffect = resourceManager.Load<Effect>("Effects/ColorFade.keeffect");
+		if (!m_fadeEffect)
+		{
+			std::cerr << "WARNING: ColorFadeScreen running without shader effect (not supported or failed to load)" << std::endl;
+		}
 	}
 
 	void ColorFadeScreen::Update(const GameTime& gameTime)
@@ -93,13 +97,24 @@ namespace KatanaEngine
 
 		if (m_fadeEffect && m_fadeEffect->IsValid())
 		{
+			// Shader-based fade: use effect to apply color and fade amount
 			m_fadeEffect->SetColor("FadeColor", m_color);
 			m_fadeEffect->SetFloat("FadeAmount", overlayAmount);
+			spriteBatch.Begin(SpriteSortMode::DEFERRED, BlendState::ALPHA_BLEND, m_fadeEffect);
+			spriteBatch.DrawPrimitive(screenRect, Color::WHITE, Color::TRANSPARENT);
+			spriteBatch.End();
 		}
+		else
+		{
+			// Fallback: Draw solid color rectangle with alpha blending
+			// Multiply the fade color's alpha by the overlay amount
+			Color fadeColor = m_color;
+			fadeColor.Alpha *= overlayAmount;
 
-		spriteBatch.Begin(SpriteSortMode::DEFERRED, BlendState::ALPHA_BLEND, m_fadeEffect);
-		spriteBatch.DrawPrimitive(screenRect, Color::WHITE, Color::TRANSPARENT);
-		spriteBatch.End();
+			spriteBatch.Begin(SpriteSortMode::DEFERRED, BlendState::ALPHA_BLEND);
+			spriteBatch.DrawPrimitive(screenRect, fadeColor, Color::TRANSPARENT);
+			spriteBatch.End();
+		}
 	}
 
 	void ColorFadeScreen::Show()

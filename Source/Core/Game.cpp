@@ -34,6 +34,7 @@ namespace KatanaEngine
 	{
 		m_screenWidth = m_config.ScreenWidth;
 		m_screenHeight = m_config.ScreenHeight;
+		m_resourceManager.SetGame(this);  // Connect ResourceManager to Game for backend detection
 	}
 
 	Game::~Game()
@@ -102,6 +103,14 @@ namespace KatanaEngine
 			return false;
 		}
 
+		// Log Allegro version for debugging
+		uint32_t version = al_get_allegro_version();
+		int major = version >> 24;
+		int minor = (version >> 16) & 255;
+		int revision = (version >> 8) & 255;
+		int release = version & 255;
+		std::cout << "Allegro Version: " << major << "." << minor << "." << revision << "." << release << std::endl;
+
 		al_init_font_addon();
 		al_init_ttf_addon();
 		al_init_primitives_addon();
@@ -129,26 +138,94 @@ namespace KatanaEngine
 			? ALLEGRO_FULLSCREEN_WINDOW
 			: (ALLEGRO_WINDOWED | ALLEGRO_RESIZABLE);
 
-		// Set display flags before creating the display.
-		al_set_new_display_flags(baseDisplayFlags | ALLEGRO_PROGRAMMABLE_PIPELINE);
+		// Try to create display with shader support
+		// On Windows, try Direct3D first (better compatibility), then OpenGL
+		// On other platforms, only OpenGL is available
 
-		// Request OpenGL 2.0+ for shader support
-		al_set_new_display_option(ALLEGRO_OPENGL, 1, ALLEGRO_SUGGEST);
-		al_set_new_display_option(ALLEGRO_OPENGL_MAJOR_VERSION, 2, ALLEGRO_SUGGEST);
-		al_set_new_display_option(ALLEGRO_OPENGL_MINOR_VERSION, 0, ALLEGRO_SUGGEST);
-		al_set_new_display_option(ALLEGRO_DEPTH_SIZE, 24, ALLEGRO_SUGGEST);
-		al_set_new_display_option(ALLEGRO_SAMPLE_BUFFERS, 1, ALLEGRO_SUGGEST);
-		al_set_new_display_option(ALLEGRO_SAMPLES, 4, ALLEGRO_SUGGEST);
+#ifdef _WIN32
+		if (m_config.PreferDirect3D)
+		{
+			std::cout << "Attempting to create display with Direct3D shader support..." << std::endl;
 
-		std::cout << "Attempting to create display with programmable pipeline (OpenGL 2.0+)..." << std::endl;
-		m_pContext->pDisplay.reset(al_create_display(m_screenWidth, m_screenHeight));
+			// First try: D3D with programmable pipeline
+			al_set_new_display_flags(baseDisplayFlags | ALLEGRO_PROGRAMMABLE_PIPELINE | ALLEGRO_DIRECT3D_INTERNAL);
+			al_set_new_display_option(ALLEGRO_DEPTH_SIZE, 0, ALLEGRO_DONTCARE);
+			al_set_new_display_option(ALLEGRO_SAMPLE_BUFFERS, 0, ALLEGRO_DONTCARE);
+			al_set_new_display_option(ALLEGRO_SAMPLES, 0, ALLEGRO_DONTCARE);
 
+			m_pContext->pDisplay.reset(al_create_display(m_screenWidth, m_screenHeight));
+
+			if (m_pContext->pDisplay)
+			{
+				m_graphicsBackend = GraphicsBackend::Direct3D;
+				std::cout << "SUCCESS: Display created with Direct3D shader support." << std::endl;
+				std::cout << "Shader support: ENABLED (HLSL)" << std::endl;
+			}
+			else
+			{
+				std::cerr << "Direct3D with programmable pipeline failed" << std::endl;
+
+				// Second try: D3D without programmable pipeline (legacy mode)
+				std::cout << "Attempting Direct3D without programmable pipeline..." << std::endl;
+				al_set_new_display_flags(baseDisplayFlags | ALLEGRO_DIRECT3D_INTERNAL);
+				al_set_new_display_option(ALLEGRO_DEPTH_SIZE, 0, ALLEGRO_DONTCARE);
+				al_set_new_display_option(ALLEGRO_SAMPLE_BUFFERS, 0, ALLEGRO_DONTCARE);
+				al_set_new_display_option(ALLEGRO_SAMPLES, 0, ALLEGRO_DONTCARE);
+
+				m_pContext->pDisplay.reset(al_create_display(m_screenWidth, m_screenHeight));
+
+				if (m_pContext->pDisplay)
+				{
+					m_graphicsBackend = GraphicsBackend::Unknown; // No shader support but D3D rendering
+					std::cout << "SUCCESS: Display created with Direct3D (legacy mode, no shaders)." << std::endl;
+					std::cout << "WARNING: Custom shaders will NOT work." << std::endl;
+				}
+				else
+				{
+					std::cerr << "Direct3D legacy mode also failed" << std::endl;
+				}
+			}
+		}
+#endif
+
+		// Try OpenGL if D3D failed or not preferred
 		if (!m_pContext->pDisplay)
 		{
-			std::cerr << "WARNING: Failed to create display with programmable pipeline." << std::endl;
+			std::cout << "Attempting to create display with OpenGL shader support..." << std::endl;
+			al_set_new_display_flags(baseDisplayFlags | ALLEGRO_PROGRAMMABLE_PIPELINE);
+
+			// Minimal OpenGL settings for better compatibility
+			al_set_new_display_option(ALLEGRO_OPENGL, 1, ALLEGRO_SUGGEST);
+			al_set_new_display_option(ALLEGRO_OPENGL_MAJOR_VERSION, 2, ALLEGRO_SUGGEST);
+			al_set_new_display_option(ALLEGRO_OPENGL_MINOR_VERSION, 0, ALLEGRO_SUGGEST);
+			al_set_new_display_option(ALLEGRO_DEPTH_SIZE, 0, ALLEGRO_DONTCARE);
+			al_set_new_display_option(ALLEGRO_SAMPLE_BUFFERS, 0, ALLEGRO_DONTCARE);
+			al_set_new_display_option(ALLEGRO_SAMPLES, 0, ALLEGRO_DONTCARE);
+
+			m_pContext->pDisplay.reset(al_create_display(m_screenWidth, m_screenHeight));
+
+			if (m_pContext->pDisplay)
+			{
+				m_graphicsBackend = GraphicsBackend::OpenGL;
+				int opengl_version = al_get_display_option(m_pContext->pDisplay.get(), ALLEGRO_OPENGL_MAJOR_VERSION);
+				int opengl_minor = al_get_display_option(m_pContext->pDisplay.get(), ALLEGRO_OPENGL_MINOR_VERSION);
+				std::cout << "SUCCESS: Display created with OpenGL shader support." << std::endl;
+				std::cout << "OpenGL Version: " << opengl_version << "." << opengl_minor << std::endl;
+				std::cout << "Shader support: ENABLED (GLSL)" << std::endl;
+			}
+			else
+			{
+				std::cerr << "OpenGL initialization failed" << std::endl;
+			}
+		}
+
+		// Fallback: No shader support
+		if (!m_pContext->pDisplay)
+		{
+			std::cerr << "WARNING: Failed to create display with shader support." << std::endl;
 			std::cerr << "This may be due to:" << std::endl;
 			std::cerr << "  - Outdated graphics drivers" << std::endl;
-			std::cerr << "  - Insufficient OpenGL support (need OpenGL 2.0+)" << std::endl;
+			std::cerr << "  - Insufficient OpenGL/DirectX support" << std::endl;
 			std::cerr << "  - Graphics virtualization or remote desktop" << std::endl;
 			std::cerr << std::endl;
 			std::cerr << "Attempting fallback without shaders..." << std::endl;
@@ -160,21 +237,13 @@ namespace KatanaEngine
 
 			if (!m_pContext->pDisplay)
 			{
-				std::cerr << "ERROR: Failed to create display even without programmable pipeline!" << std::endl;
+				std::cerr << "ERROR: Failed to create display!" << std::endl;
 				return false;
 			}
 
+			m_graphicsBackend = GraphicsBackend::Unknown;
 			std::cout << "SUCCESS: Display created without shader support." << std::endl;
-			std::cout << "WARNING: Custom shaders will NOT work in this mode." << std::endl;
-		}
-		else
-		{
-			// Display created successfully with programmable pipeline
-			int opengl_version = al_get_display_option(m_pContext->pDisplay.get(), ALLEGRO_OPENGL_MAJOR_VERSION);
-			int opengl_minor = al_get_display_option(m_pContext->pDisplay.get(), ALLEGRO_OPENGL_MINOR_VERSION);
-			std::cout << "SUCCESS: Display created with programmable pipeline support." << std::endl;
-			std::cout << "OpenGL Version: " << opengl_version << "." << opengl_minor << std::endl;
-			std::cout << "Shader support: ENABLED" << std::endl;
+			std::cout << "WARNING: Custom shaders will NOT work." << std::endl;
 		}
 
 		UpdateScreenSizeFromDisplay();
