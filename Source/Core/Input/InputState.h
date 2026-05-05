@@ -24,6 +24,12 @@ namespace KatanaEngine
         bool IsKeyPressed(Keys key) const;   // Just pressed this frame
         bool IsKeyReleased(Keys key) const;  // Just released this frame
 
+        // Keyboard - Any key state
+		bool IsAnyKeyPressed(Keys& pressedKey) const;  // Returns true if any key was just pressed this frame
+		bool IsAnyKeyPressed() const; // Returns true if any key was just pressed this frame (no out parameter)
+		bool IsAnyKeyReleased(Keys& releasedKey) const; // Returns true if any key was just released this frame
+		bool IsAnyKeyReleased() const; // Returns true if any key was just released this frame (no out parameter)
+
         // Mouse - Position
         Vector2 GetMousePosition() const { return m_mousePosition; }
         int GetMouseX() const { return static_cast<int>(m_mousePosition.X); }
@@ -36,6 +42,12 @@ namespace KatanaEngine
         // Mouse - State transitions
         bool IsMouseButtonPressed(MouseButton button) const;   // Just pressed this frame
         bool IsMouseButtonReleased(MouseButton button) const;  // Just released this frame
+
+		// Mouse - Any button state
+		bool IsAnyMouseButtonPressed(MouseButton& pressedButton) const;  // Returns true if any mouse button was just pressed this frame
+		bool IsAnyMouseButtonPressed() const; // Returns true if any mouse button was just pressed this frame (no out parameter)
+		bool IsAnyMouseButtonReleased(MouseButton& releasedButton) const; // Returns true if any mouse button was just released this frame
+		bool IsAnyMouseButtonReleased() const; // Returns true if any mouse button was just released this frame (no out parameter)
 
     private:
         static const int KEY_COUNT = static_cast<int>(Keys::KEY_COUNT);

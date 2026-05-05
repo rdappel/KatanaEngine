@@ -37,6 +37,8 @@ namespace KatanaEngine
 
 		size_t GetScreenCount() const { return m_screens.size(); }
 
+		void SetExitWithNoScreens(bool exit) { m_exitWithNoScreens = exit; }
+
 	private:
 		void ProcessPendingChanges();
 
@@ -46,5 +48,7 @@ namespace KatanaEngine
 		std::vector<std::shared_ptr<Screen>> m_screens;
 		std::vector<std::shared_ptr<Screen>> m_screensToAdd;
 		std::vector<std::shared_ptr<Screen>> m_screensToRemove;
+
+		bool m_exitWithNoScreens = true;
 	};
 }

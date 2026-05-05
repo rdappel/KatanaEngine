@@ -5,6 +5,7 @@
 // Core/Platform
 #include "Platform/PlatformContext.h"
 #include "Platform/PlatformColor.h"
+#include "Platform/PlatformMouseCursor.h"
 
 // Services (optional)
 #include "Screens/ScreenManager.h"
@@ -65,6 +66,16 @@ namespace KatanaEngine
 
 		if (!m_pContext || !m_pContext->pTimer) return;
 		al_set_timer_speed(m_pContext->pTimer.get(), m_targetElapsedTime);
+	}
+
+	bool Game::SetSystemMouseCursor(SystemMouseCursor cursor)
+	{
+		if (!m_pContext || !m_pContext->pDisplay)
+		{
+			return false;
+		}
+
+		return al_set_system_mouse_cursor(m_pContext->pDisplay.get(), ToAllegroSystemMouseCursor(cursor));
 	}
 
 	void Game::Clear(const Color& color)

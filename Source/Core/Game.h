@@ -4,6 +4,7 @@
 #include <string>
 
 #include "Input/InputState.h"
+#include "Input/SystemMouseCursor.h"
 #include "Graphics/SpriteBatch.h"
 #include "Resource/ResourceManager.h"
 #include "Screens/ScreenManager.h"
@@ -52,6 +53,7 @@ namespace KatanaEngine
 
 		double GetTargetFrameRate() const { return m_targetFrameRate; }
 		void SetTargetFrameRate(double fps);
+		bool SetSystemMouseCursor(SystemMouseCursor cursor);
 
 		ScreenManager& GetScreenManager() { return m_screenManager; }
 		const ScreenManager& GetScreenManager() const { return m_screenManager; }

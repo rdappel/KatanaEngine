@@ -71,29 +71,30 @@ namespace KatanaEngine
 
     bool Music::Play(bool loop, float loopPauseSeconds)
     {
-        if (!m_stream)
-        {
-            return false;
-        }
+        if (!m_stream) return false;
 
         m_loop = loop;
-        m_shouldPlay = true;
         m_loopPauseSeconds = std::max(0.0f, loopPauseSeconds);
+
+		if (IsPlaying()) return true;
+        
+        m_shouldPlay = true;
         m_loopPauseRemaining = 0.0f;
         m_waitingForLoopRestart = false;
 
-        al_set_audio_stream_playmode(m_stream,
-            m_loop && m_loopPauseSeconds <= 0.0f ? ALLEGRO_PLAYMODE_LOOP : ALLEGRO_PLAYMODE_ONCE);
+		bool modeLoop = m_loop && m_loopPauseSeconds <= 0.0f;
+
+		ALLEGRO_PLAYMODE playmode = modeLoop
+            ? ALLEGRO_PLAYMODE_LOOP : ALLEGRO_PLAYMODE_ONCE;
+
+        al_set_audio_stream_playmode(m_stream, playmode);
 
         return Restart();
     }
 
     void Music::Stop()
     {
-        if (!m_stream)
-        {
-            return;
-        }
+        if (!m_stream) return;
 
         al_set_audio_stream_playing(m_stream, false);
         al_rewind_audio_stream(m_stream);
@@ -104,19 +105,15 @@ namespace KatanaEngine
 
     void Music::Pause()
     {
-        if (m_stream)
-        {
-            al_set_audio_stream_playing(m_stream, false);
-            m_shouldPlay = false;
-        }
+        if (!m_stream) return;
+
+        al_set_audio_stream_playing(m_stream, false);
+        m_shouldPlay = false;
     }
 
     void Music::Resume()
     {
-        if (!m_stream)
-        {
-            return;
-        }
+        if (!m_stream) return;
 
         m_shouldPlay = true;
         if (!m_waitingForLoopRestart)
@@ -153,10 +150,8 @@ namespace KatanaEngine
     {
         m_volume = std::max(0.0f, volume);
 
-        if (m_stream)
-        {
-            al_set_audio_stream_gain(m_stream, m_volume);
-        }
+        if (!m_stream) return;
+        al_set_audio_stream_gain(m_stream, m_volume);
     }
 
     bool Music::LoadFromFile(const std::string& path)
@@ -190,10 +185,7 @@ namespace KatanaEngine
 
     bool Music::Restart()
     {
-        if (!m_stream)
-        {
-            return false;
-        }
+        if (!m_stream) return false;
 
         al_set_audio_stream_playing(m_stream, false);
         if (!al_rewind_audio_stream(m_stream))

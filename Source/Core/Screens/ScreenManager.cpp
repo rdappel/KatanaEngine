@@ -76,6 +76,9 @@ namespace KatanaEngine
 
 	void ScreenManager::Update(const GameTime& gameTime)
 	{
+		// If there are no screens, check if we should exit the game
+		if (m_screens.empty() && m_exitWithNoScreens) m_pGame->Exit();
+
 		// Iterate from top (last) to bottom (first), stop at update-blocking screen
 		for (auto it = m_screens.rbegin(); it != m_screens.rend(); ++it)
 		{

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Math/Region.h"
+#include "Core/Input/InputState.h"
 
 #include <functional>
 
@@ -25,10 +26,12 @@ namespace KatanaEngine
 		void SetEnabled(bool enabled);
 		void SetDisabled(bool disabled) { SetEnabled(!disabled); }
 
+		bool IsMouseHover() const { return m_isMouseHover; }
 		bool IsFocused() const { return m_isFocused; }
 		void SetFocused(bool focused);
 		void Select();
 
+		virtual void HandleInput(const InputState& inputState);
 		virtual void Update(const GameTime& gameTime) {}
 		virtual void Draw(SpriteBatch& spriteBatch) = 0;
 
@@ -39,5 +42,7 @@ namespace KatanaEngine
 		Region m_bounds = Region(0, 0, 200, 48);
 		bool m_isFocused = false;
 		bool m_isEnabled = true;
+		bool m_isMouseHover = false;
+
 	};
 }

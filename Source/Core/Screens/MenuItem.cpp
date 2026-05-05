@@ -4,6 +4,13 @@
 
 namespace KatanaEngine
 {
+
+	void MenuItem::HandleInput(const InputState& inputState)
+	{
+		Vector2 mousePosition = inputState.GetMousePosition();
+		m_isMouseHover = GetBounds().Contains(mousePosition);
+	}
+
 	void MenuItem::SetFocused(bool focused)
 	{
 		if (focused && !m_isEnabled)

@@ -105,6 +105,15 @@ namespace KatanaEngine
 
 	void Menu::HandleInput(const InputState& inputState)
 	{
+		const int lastVisibleIndex = GetLastVisibleIndex();
+		for (int i = m_firstVisibleIndex; i <= lastVisibleIndex; ++i)
+		{
+			if (m_items[i])
+			{
+				m_items[i]->HandleInput(inputState);
+			}
+		}
+
 		if (inputState.IsKeyPressed(Keys::DOWN) || inputState.IsKeyPressed(Keys::S))
 		{
 			FocusNext();
@@ -119,7 +128,21 @@ namespace KatanaEngine
 			SelectFocused();
 		}
 
-		const int hoveredIndex = GetItemIndexAtPosition(inputState.GetMousePosition());
+		int hoveredIndex = -1;
+		for (int i = m_firstVisibleIndex; i <= lastVisibleIndex; ++i)
+		{
+			if (m_items[i] && m_items[i]->IsEnabled() && m_items[i]->IsMouseHover())
+			{
+				hoveredIndex = i;
+				break;
+			}
+		}
+
+		if (hoveredIndex < 0)
+		{
+			hoveredIndex = GetItemIndexAtPosition(inputState.GetMousePosition());
+		}
+
 		if (hoveredIndex >= 0)
 		{
 			SetFocus(hoveredIndex);
@@ -128,6 +151,11 @@ namespace KatanaEngine
 				SelectFocused();
 			}
 		}
+
+		if (OnCursorChanged)
+		{
+			OnCursorChanged(hoveredIndex >= 0 ? SystemMouseCursor::LINK : SystemMouseCursor::DEFAULT);
+		}
 	}
 
 	void Menu::Update(const GameTime& gameTime)
@@ -135,10 +163,7 @@ namespace KatanaEngine
 		const int lastVisibleIndex = GetLastVisibleIndex();
 		for (int i = m_firstVisibleIndex; i <= lastVisibleIndex; ++i)
 		{
-			if (m_items[i])
-			{
-				m_items[i]->Update(gameTime);
-			}
+			if (m_items[i]) m_items[i]->Update(gameTime);
 		}
 	}
 

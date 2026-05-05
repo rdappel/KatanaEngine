@@ -1,6 +1,7 @@
 #pragma once
 
 #include "MenuItem.h"
+#include "Core/Input/SystemMouseCursor.h"
 
 #include <functional>
 #include <memory>
@@ -20,6 +21,7 @@ namespace KatanaEngine
 
 		std::function<void(Menu&, int, int)> OnFocusChanged;
 		std::function<void(Menu&)> OnSelect;
+		std::function<void(SystemMouseCursor)> OnCursorChanged;
 
 		void AddItem(const std::shared_ptr<MenuItem>& item);
 
@@ -43,13 +45,13 @@ namespace KatanaEngine
 		virtual void Draw(SpriteBatch& spriteBatch) = 0;
 
 	protected:
-		Menu() = default;
 
 		const std::vector<std::shared_ptr<MenuItem>>& GetItems() const { return m_items; }
 		int GetFirstVisibleIndex() const { return m_firstVisibleIndex; }
 		int GetLastVisibleIndex() const;
 
 	private:
+
 		void KeepFocusedItemVisible();
 		int FindNextFocusableIndex(int startIndex, int step) const;
 		int GetItemIndexAtPosition(const Vector2& position) const;

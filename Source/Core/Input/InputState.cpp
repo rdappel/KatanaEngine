@@ -82,6 +82,45 @@ namespace KatanaEngine
         return !m_currentKeyState[index] && m_previousKeyState[index];
     }
 
+    bool InputState::IsAnyKeyPressed(Keys& pressedKey) const
+    {
+        for (int i = 0; i < KEY_COUNT; ++i)
+        {
+            if (m_currentKeyState[i] && !m_previousKeyState[i])
+            {
+                pressedKey = static_cast<Keys>(i);
+                return true;
+            }
+		}
+		return false;
+    }
+
+    bool InputState::IsAnyKeyPressed() const
+    {
+		Keys ignore;
+		return IsAnyKeyPressed(ignore);
+    }
+
+    bool InputState::IsAnyKeyReleased(Keys& releasedKey) const
+    {
+        for (int i = 0; i < KEY_COUNT; ++i)
+        {
+            if (!m_currentKeyState[i] && m_previousKeyState[i])
+            {
+                releasedKey = static_cast<Keys>(i);
+                return true;
+            }
+		}
+		return false;
+    }
+
+    bool InputState::IsAnyKeyReleased() const
+	{
+		Keys ignore;
+		return IsAnyKeyReleased(ignore);
+    }
+
+
     bool InputState::IsMouseButtonDown(MouseButton button) const
     {
         int index = static_cast<int>(button);
@@ -107,4 +146,42 @@ namespace KatanaEngine
         if (index < 0 || index >= MOUSE_BUTTON_COUNT) return false;
         return !m_currentMouseState[index] && m_previousMouseState[index];
     }
+
+	bool InputState::IsAnyMouseButtonPressed(MouseButton& pressedButton) const
+    {
+        for (int i = 0; i < MOUSE_BUTTON_COUNT; ++i)
+        {
+            if (m_currentMouseState[i] && !m_previousMouseState[i])
+            {
+                pressedButton = static_cast<MouseButton>(i);
+                return true;
+            }
+        }
+        return false;
+	}
+
+    bool InputState::IsAnyMouseButtonPressed() const
+	{
+        MouseButton ignore;
+		return IsAnyMouseButtonPressed(ignore);
+    }
+
+    bool InputState::IsAnyMouseButtonReleased(MouseButton& releasedButton) const
+    {
+        for (int i = 0; i < MOUSE_BUTTON_COUNT; ++i)
+        {
+            if (!m_currentMouseState[i] && m_previousMouseState[i])
+            {
+                releasedButton = static_cast<MouseButton>(i);
+                return true;
+            }
+        }
+        return false;
+	}
+
+    bool InputState::IsAnyMouseButtonReleased() const
+    {
+        MouseButton ignore;
+        return IsAnyMouseButtonReleased(ignore);
+	}
 }
