@@ -1,7 +1,10 @@
 #include "pch.h"
 
 #include "Menu.h"
+#include "ScreenManager.h"
+#include "Core/Game.h"
 #include "Core/Input/InputState.h"
+#include "Core/Services/EngineServices.h"
 
 namespace KatanaEngine
 {
@@ -74,10 +77,7 @@ namespace KatanaEngine
 
 	bool Menu::FocusNext()
 	{
-		if (m_items.empty())
-		{
-			return false;
-		}
+		if (m_items.empty()) return false;
 
 		int nextIndex = FindNextFocusableIndex(m_selectedIndex, 1);
 		return SetFocus(nextIndex);
@@ -85,10 +85,7 @@ namespace KatanaEngine
 
 	bool Menu::FocusPrevious()
 	{
-		if (m_items.empty())
-		{
-			return false;
-		}
+		if (m_items.empty()) return false;
 
 		int previousIndex = FindNextFocusableIndex(m_selectedIndex, -1);
 		return SetFocus(previousIndex);
@@ -152,10 +149,7 @@ namespace KatanaEngine
 			}
 		}
 
-		if (OnCursorChanged)
-		{
-			OnCursorChanged(hoveredIndex >= 0 ? SystemMouseCursor::LINK : SystemMouseCursor::DEFAULT);
-		}
+		EngineServices::Cursor::Set(hoveredIndex >= 0 ? MouseCursor::LINK : MouseCursor::DEFAULT);
 	}
 
 	void Menu::Update(const GameTime& gameTime)
@@ -169,10 +163,7 @@ namespace KatanaEngine
 
 	int Menu::GetLastVisibleIndex() const
 	{
-		if (m_items.empty())
-		{
-			return -1;
-		}
+		if (m_items.empty()) return -1;
 
 		const int visibleCount = m_visibleItemCount <= 0 ? static_cast<int>(m_items.size()) : m_visibleItemCount;
 		const int lastIndex = m_firstVisibleIndex + visibleCount - 1;
@@ -210,10 +201,7 @@ namespace KatanaEngine
 
 	int Menu::FindNextFocusableIndex(int startIndex, int step) const
 	{
-		if (m_items.empty())
-		{
-			return -1;
-		}
+		if (m_items.empty()) return -1;
 
 		const int itemCount = static_cast<int>(m_items.size());
 		int index = startIndex;
@@ -240,5 +228,13 @@ namespace KatanaEngine
 		}
 
 		return startIndex;
+	}
+
+	void Menu::Disable()
+	{
+		if (!m_enabled) return;
+		m_enabled = false;
+
+		EngineServices::Cursor::Set(MouseCursor::DEFAULT);
 	}
 }

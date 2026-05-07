@@ -12,7 +12,7 @@ namespace KatanaEngine
 {
 	class Game;
 
-	class ScreenManager
+ class ScreenManager : public std::enable_shared_from_this<ScreenManager>
 	{
 	public:
 
@@ -24,6 +24,7 @@ namespace KatanaEngine
 		ScreenManager& operator=(const ScreenManager&) = delete;
 
 		Game& GetGame() const { return *m_pGame; }
+		std::weak_ptr<ScreenManager> GetWeakPtr() { return shared_from_this(); }
 
 		void AddScreen(std::shared_ptr<Screen> screen);
 		void RemoveScreen(std::shared_ptr<Screen> screen);

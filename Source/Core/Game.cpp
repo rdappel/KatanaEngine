@@ -6,6 +6,7 @@
 #include "Platform/PlatformContext.h"
 #include "Platform/PlatformColor.h"
 #include "Platform/PlatformMouseCursor.h"
+#include "Services/EngineServices.h"
 
 // Services (optional)
 #include "Screens/ScreenManager.h"
@@ -29,9 +30,10 @@ namespace KatanaEngine
 	Game::Game(int argc, char** argv, const GameConfig& config)
 		: m_pContext(std::make_unique<PlatformContext>())
 		, m_resourceManager(config.ContentRoot)
-		, m_screenManager(this)
+		, m_screenManager(std::make_shared<ScreenManager>(this))
 		, m_config(config)
 	{
+		EngineServices::Configure(m_screenManager);
 		m_screenWidth = m_config.ScreenWidth;
 		m_screenHeight = m_config.ScreenHeight;
 		m_resourceManager.SetGame(this);  // Connect ResourceManager to Game for backend detection
@@ -69,14 +71,14 @@ namespace KatanaEngine
 		al_set_timer_speed(m_pContext->pTimer.get(), m_targetElapsedTime);
 	}
 
-	bool Game::SetSystemMouseCursor(SystemMouseCursor cursor)
+	bool Game::SetMouseCursor(MouseCursor cursor)
 	{
 		if (!m_pContext || !m_pContext->pDisplay)
 		{
 			return false;
 		}
 
-		return al_set_system_mouse_cursor(m_pContext->pDisplay.get(), ToAllegroSystemMouseCursor(cursor));
+		return al_set_system_mouse_cursor(m_pContext->pDisplay.get(), ToAllegroMouseCursor(cursor));
 	}
 
 	void Game::Clear(const Color& color)
@@ -97,7 +99,7 @@ namespace KatanaEngine
 
 	bool Game::InitializeAllegro()
 	{
-		if (!al_init()) 
+		if (!al_init())
 		{
 			std::cerr << "ERROR: Failed to initialize Allegro core library" << std::endl;
 			return false;
@@ -250,14 +252,14 @@ namespace KatanaEngine
 		al_set_window_title(m_pContext->pDisplay.get(), m_title.c_str());
 
 		m_pContext->pEventQueue.reset(al_create_event_queue());
-		if (!m_pContext->pEventQueue) 
+		if (!m_pContext->pEventQueue)
 		{
 			std::cerr << "ERROR: Failed to create event queue" << std::endl;
 			return false;
 		}
 
 		m_pContext->pTimer.reset(al_create_timer(m_targetElapsedTime));
-		if (!m_pContext->pTimer) 
+		if (!m_pContext->pTimer)
 		{
 			std::cerr << "ERROR: Failed to create timer" << std::endl;
 			return false;
@@ -273,10 +275,12 @@ namespace KatanaEngine
 
 	int Game::Shutdown()
 	{
+		EngineServices::Reset();
+
 		if (m_isInitialized) UnloadContent();
 
 		// Optional services
-		m_screenManager.ClearImmediate();
+		m_screenManager->ClearImmediate();
 		m_resourceManager.ClearCache();
 
 		if (!m_pContext) return 1;

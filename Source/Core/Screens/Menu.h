@@ -1,7 +1,7 @@
 #pragma once
 
 #include "MenuItem.h"
-#include "Core/Input/SystemMouseCursor.h"
+#include "Core/Input/MouseCursor.h"
 
 #include <functional>
 #include <memory>
@@ -9,6 +9,7 @@
 
 namespace KatanaEngine
 {
+	class ScreenManager;
 	struct GameTime;
 	class InputState;
 	class SpriteBatch;
@@ -16,18 +17,20 @@ namespace KatanaEngine
 	class Menu
 	{
 	public:
+		Menu() = default;
 
 		virtual ~Menu() = default;
 
 		std::function<void(Menu&, int, int)> OnFocusChanged;
 		std::function<void(Menu&)> OnSelect;
-		std::function<void(SystemMouseCursor)> OnCursorChanged;
+
+		void SetScreenManager(std::weak_ptr<ScreenManager> pScreenManager) { m_pScreenManager = std::move(pScreenManager); }
 
 		void AddItem(const std::shared_ptr<MenuItem>& item);
 
 		std::shared_ptr<MenuItem> GetItem(int index);
 		std::shared_ptr<const MenuItem> GetItem(int index) const;
-		
+
 		int GetItemCount() const { return static_cast<int>(m_items.size()); }
 		int GetSelectedIndex() const { return m_selectedIndex; }
 		int GetVisibleItemCount() const { return m_visibleItemCount; }
@@ -39,6 +42,10 @@ namespace KatanaEngine
 		bool FocusNext();
 		bool FocusPrevious();
 		void SelectFocused();
+
+		bool IsEnabled() const { return m_enabled; }
+		void Enable() { m_enabled = true; }
+		void Disable();
 
 		virtual void HandleInput(const InputState& inputState);
 		virtual void Update(const GameTime& gameTime);
@@ -56,10 +63,12 @@ namespace KatanaEngine
 		int FindNextFocusableIndex(int startIndex, int step) const;
 		int GetItemIndexAtPosition(const Vector2& position) const;
 
+		std::weak_ptr<ScreenManager> m_pScreenManager;
 		std::vector<std::shared_ptr<MenuItem>> m_items;
 		int m_selectedIndex = -1;
 		int m_visibleItemCount = 0;
 		int m_firstVisibleIndex = 0;
 		bool m_wrapFocus = true;
+		bool m_enabled = true;
 	};
 }

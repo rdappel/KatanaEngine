@@ -55,6 +55,9 @@
     <ClInclude Include="Source\Core\Interfaces\IRenderContext.h" />
     <ClInclude Include="Source\Core\Save\SaveData.h" />
     <ClInclude Include="Source\Core\Save\SaveManager.h" />
+    <ClInclude Include="Source\Core\Services\EngineServices.h" />
+    <ClInclude Include="Source\Core\Input\MouseCursor.h" />
+    <ClInclude Include="Source\Core\Platform\PlatformMouseCursor.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\pch.cpp" />

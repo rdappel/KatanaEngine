@@ -203,9 +203,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Core\Input\MouseCursor.h" />
+    <ClInclude Include="Source\Core\Platform\PlatformMouseCursor.h" />
     <ClInclude Include="Source\Core\Save\SaveManager.h" />
     <ClInclude Include="Source\Core\Save\SaveData.h" />
     <ClInclude Include="Source\Core\Interfaces\IRenderContext.h" />
+    <ClInclude Include="Source\Core\Services\EngineServices.h" />
     <ClInclude Include="Source\GUI\Checkbox.h" />
     <ClInclude Include="Source\GUI\Panel.h" />
     <ClInclude Include="Source\pch.h" />

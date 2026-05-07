@@ -6,8 +6,7 @@
 namespace KatanaEngine
 {
 	Screen::Screen(bool show)
-		: m_pScreenManager(nullptr)
-		, m_isDrawBlocking(true)
+     : m_isDrawBlocking(true)
 		, m_isUpdateBlocking(true)
 		, m_isInputBlocking(true)
 		, m_showOnAdd(show)
@@ -65,9 +64,10 @@ namespace KatanaEngine
 
 	void Screen::RemoveFromManager()
 	{
-		if (m_pScreenManager)
+       auto manager = m_pScreenManager.lock();
+		if (manager)
 		{
-			m_pScreenManager->RemoveScreen(this);
+           manager->RemoveScreen(this);
 		}
 	}
 

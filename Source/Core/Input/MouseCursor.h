@@ -2,7 +2,7 @@
 
 namespace KatanaEngine
 {
-    enum class SystemMouseCursor
+    enum class MouseCursor
     {
         DEFAULT,
         ARROW,

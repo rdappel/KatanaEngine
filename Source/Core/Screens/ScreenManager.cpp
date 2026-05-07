@@ -53,7 +53,7 @@ namespace KatanaEngine
 		{
 			screen->NotifyRemoved();
 			screen->UnloadContent();
-			screen->SetScreenManager(nullptr);
+          screen->SetScreenManager({});
 		}
 
 		m_screens.clear();
@@ -125,7 +125,7 @@ namespace KatanaEngine
 		{
 			screen->NotifyRemoved();
 			screen->UnloadContent();
-			screen->SetScreenManager(nullptr);
+          screen->SetScreenManager({});
 
 			auto it = std::find(m_screens.begin(), m_screens.end(), screen);
 			if (it != m_screens.end())
@@ -140,7 +140,7 @@ namespace KatanaEngine
 		// Process additions
 		for (auto& screen : screensToAdd)
 		{
-			screen->SetScreenManager(this);
+         screen->SetScreenManager(shared_from_this());
 			screen->LoadContent(*m_pResourceManager);
 			m_screens.push_back(screen);
 			if (screen->ShouldShowOnAdd())

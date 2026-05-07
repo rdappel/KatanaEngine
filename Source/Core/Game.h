@@ -4,7 +4,7 @@
 #include <string>
 
 #include "Input/InputState.h"
-#include "Input/SystemMouseCursor.h"
+#include "Input/MouseCursor.h"
 #include "Graphics/SpriteBatch.h"
 #include "Resource/ResourceManager.h"
 #include "Screens/ScreenManager.h"
@@ -61,10 +61,10 @@ namespace KatanaEngine
 
 		double GetTargetFrameRate() const { return m_targetFrameRate; }
 		void SetTargetFrameRate(double fps);
-		bool SetSystemMouseCursor(SystemMouseCursor cursor);
+		bool SetMouseCursor(MouseCursor cursor);
 
-		ScreenManager& GetScreenManager() { return m_screenManager; }
-		const ScreenManager& GetScreenManager() const { return m_screenManager; }
+       ScreenManager& GetScreenManager() { return *m_screenManager; }
+		const ScreenManager& GetScreenManager() const { return *m_screenManager; }
 
 		ResourceManager& GetResourceManager() { return m_resourceManager; }
 		const ResourceManager& GetResourceManager() const { return m_resourceManager; }
@@ -94,7 +94,7 @@ namespace KatanaEngine
 		InputState m_inputState;
 		SpriteBatch m_spriteBatch;
 		ResourceManager m_resourceManager;
-		ScreenManager m_screenManager;
+      std::shared_ptr<ScreenManager> m_screenManager;
 
 		GameConfig m_config;
 

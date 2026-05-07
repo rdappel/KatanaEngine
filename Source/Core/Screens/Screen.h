@@ -1,6 +1,7 @@
 #pragma once
 
 #include <functional>
+#include <memory>
 
 namespace KatanaEngine
 {
@@ -39,7 +40,7 @@ namespace KatanaEngine
 		bool IsInputBlocking() const { return m_isInputBlocking; }
 		void SetInputBlocking(bool blocking) { m_isInputBlocking = blocking; }
 
-		ScreenManager* GetScreenManager() const { return m_pScreenManager; }
+        ScreenManager* GetScreenManager() const { return m_pScreenManager.lock().get(); }
 
 	protected:
 		bool BeginShow();
@@ -51,11 +52,11 @@ namespace KatanaEngine
 
 		friend class ScreenManager;
 	
-		void SetScreenManager(ScreenManager* manager) { m_pScreenManager = manager; }
+       void SetScreenManager(std::shared_ptr<ScreenManager> manager) { m_pScreenManager = std::move(manager); }
 		bool ShouldShowOnAdd() const { return m_showOnAdd; }
 		void NotifyRemoved();
 
-		ScreenManager* m_pScreenManager = nullptr;
+      std::weak_ptr<ScreenManager> m_pScreenManager;
 
 		bool m_isDrawBlocking = true;
 		bool m_isUpdateBlocking = true;
