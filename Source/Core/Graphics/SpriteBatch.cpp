@@ -52,7 +52,7 @@ namespace KatanaEngine
     void SpriteBatch::Begin(SpriteSortMode sortMode, BlendState blendState, const std::shared_ptr<Effect>& effect, const IRenderContext* renderContext)
     {
         m_zoom = renderContext ? renderContext->GetZoom() : 1.0f;
-        Begin(sortMode, blendState, effect, renderContext ? renderContext->GetSnappedViewOffset() : Vector2::ZERO);
+        Begin(sortMode, blendState, effect, renderContext ? renderContext->GetViewOffset() : Vector2::ZERO);
     }
 
     void SpriteBatch::Begin(SpriteSortMode sortMode, BlendState blendState, const std::shared_ptr<Effect>& effect, const Vector2& viewOffset)
@@ -313,8 +313,11 @@ namespace KatanaEngine
             flags |= ALLEGRO_FLIP_VERTICAL;
 
         Vector2 drawPosition = sprite.position - m_viewOffset;
-        drawPosition.X = std::roundf(drawPosition.X);
-        drawPosition.Y = std::roundf(drawPosition.Y);
+        if (sprite.pixelSnap)
+        {
+            drawPosition.X = std::roundf(drawPosition.X);
+            drawPosition.Y = std::roundf(drawPosition.Y);
+        }
 
         al_draw_tinted_scaled_rotated_bitmap_region(bitmap,
             sx, sy, sw, sh,
@@ -340,6 +343,12 @@ namespace KatanaEngine
         const Region& sourceRegion, const Color& tint)
     {
         Draw(texture, position, &sourceRegion, tint, 0.0f, Vector2::ZERO, Vector2::ONE, SpriteEffects::NONE, 0.0f);
+    }
+
+    void SpriteBatch::Draw(const std::shared_ptr<Texture>& texture, const Vector2& position,
+        const Region& sourceRegion, const Color& tint, bool pixelSnap)
+    {
+        Draw(texture, position, &sourceRegion, tint, 0.0f, Vector2::ZERO, Vector2::ONE, SpriteEffects::NONE, 0.0f, pixelSnap);
     }
 
     void SpriteBatch::Draw(const std::shared_ptr<Texture>& texture, const Region& destinationRegion, const Color& tint)
@@ -376,7 +385,7 @@ namespace KatanaEngine
 
     void SpriteBatch::Draw(const std::shared_ptr<Texture>& texture, const Vector2& position,
         const Region* sourceRegion, const Color& tint, float rotation,
-        const Vector2& origin, const Vector2& scale, SpriteEffects effects, float layerDepth)
+        const Vector2& origin, const Vector2& scale, SpriteEffects effects, float layerDepth, bool pixelSnap)
     {
         if (!texture || !texture->IsValid()) return;
 
@@ -394,6 +403,7 @@ namespace KatanaEngine
         sprite.scale = scale;
         sprite.effects = effects;
         sprite.layerDepth = layerDepth;
+        sprite.pixelSnap = pixelSnap;
 
         if (m_sortMode == SpriteSortMode::IMMEDIATE)
         {

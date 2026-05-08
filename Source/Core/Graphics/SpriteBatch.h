@@ -70,6 +70,8 @@ namespace KatanaEngine
         // Draw portion of texture (source region) at position
         void Draw(const std::shared_ptr<Texture>& texture, const Vector2& position,
             const Region& sourceRegion, const Color& tint);
+        void Draw(const std::shared_ptr<Texture>& texture, const Vector2& position,
+            const Region& sourceRegion, const Color& tint, bool pixelSnap);
 
         // Draw to destination region
         void Draw(const std::shared_ptr<Texture>& texture, const Region& destinationRegion, const Color& tint);
@@ -85,7 +87,7 @@ namespace KatanaEngine
         void Draw(const std::shared_ptr<Texture>& texture, const Vector2& position,
             const Region* sourceRegion, const Color& tint, float rotation,
             const Vector2& origin, const Vector2& scale, SpriteEffects effects = SpriteEffects::NONE,
-            float layerDepth = 0.0f);
+            float layerDepth = 0.0f, bool pixelSnap = true);
 
         // Text drawing
         void DrawString(const std::shared_ptr<Font>& font, const std::string& text, const Vector2& position);
@@ -118,6 +120,7 @@ namespace KatanaEngine
             Vector2 scale = Vector2::ONE;
             SpriteEffects effects = SpriteEffects::NONE;
             float layerDepth = 0.0f;
+            bool pixelSnap = true;
         };
 
         struct TextInfo
