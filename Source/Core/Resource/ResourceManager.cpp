@@ -10,6 +10,8 @@
 #include "Core/Platform/PlatformFont.h"
 #include "Core/Resource/AnimationSet.h"
 #include "Core/Resource/Effect.h"
+
+#include <filesystem>
 #include "Core/Resource/Sound.h"
 #include "Core/Resource/Music.h"
 
@@ -106,7 +108,8 @@ namespace KatanaEngine
 
     std::string ResourceManager::MakeFullPath(const std::string& path) const
     {
-        if (m_contentRoot.empty()) return path;
+        // Absolute paths (e.g. files a user picked in a tool) bypass the content root.
+        if (m_contentRoot.empty() || std::filesystem::path(path).is_absolute()) return path;
 
         // Build the combined path
         std::string fullPath;

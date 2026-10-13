@@ -121,10 +121,10 @@ namespace KatanaEngine
         switch (blendState)
         {
         case BlendState::ALPHA_BLEND:
-            al_set_blender(ALLEGRO_ADD, ALLEGRO_ALPHA, ALLEGRO_INVERSE_ALPHA);
+            al_set_blender(ALLEGRO_ADD, ALLEGRO_ONE, ALLEGRO_INVERSE_ALPHA);
             break;
         case BlendState::ADDITIVE:
-            al_set_blender(ALLEGRO_ADD, ALLEGRO_ALPHA, ALLEGRO_ONE);
+            al_set_blender(ALLEGRO_ADD, ALLEGRO_ONE, ALLEGRO_ONE);
             break;
         case BlendState::NON_PREMULTIPLIED:
             al_set_blender(ALLEGRO_ADD, ALLEGRO_ALPHA, ALLEGRO_INVERSE_ALPHA);
@@ -137,8 +137,8 @@ namespace KatanaEngine
 
     void SpriteBatch::RestoreBlendState()
     {
-        // Restore default alpha blending
-        al_set_blender(ALLEGRO_ADD, ALLEGRO_ALPHA, ALLEGRO_INVERSE_ALPHA);
+        // Restore Allegro's default (premultiplied) alpha blending
+        al_set_blender(ALLEGRO_ADD, ALLEGRO_ONE, ALLEGRO_INVERSE_ALPHA);
     }
 
     void SpriteBatch::FlushBatch()

@@ -47,6 +47,7 @@
     <ClInclude Include="Source\Particles\Interfaces\IBehaviors.h" />
     <ClInclude Include="Source\Particles\ParticleBehaviors.h" />
     <ClInclude Include="Source\Particles\ParticleEmitter.h" />
+    <ClInclude Include="Source\Particles\SimpleParticleDrawers.h" />
     <ClInclude Include="Source\GUI\Checkbox.h" />
     <ClInclude Include="Source\GUI\Panel.h" />
     <ClInclude Include="Source\Core\Interfaces\IBounded.h" />

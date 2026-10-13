@@ -31,7 +31,8 @@ namespace KatanaEngine
 			Vector2 Velocity;
 			Color Color = Color::WHITE;
 			float Scale = 1.0f;
-			float Rotation = 0.0f;
+			float Rotation = 0.0f;			// radians
+			float AngularVelocity = 0.0f;	// radians per second (applied by the game's updater)
 		};
 	}
 }

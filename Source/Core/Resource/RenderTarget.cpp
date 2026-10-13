@@ -1,6 +1,7 @@
 #include "pch.h"
 
 #include "RenderTarget.h"
+#include "Core/Platform/PlatformColor.h"
 
 namespace KatanaEngine
 {
@@ -68,6 +69,6 @@ namespace KatanaEngine
             return;
         }
 
-        al_clear_to_color(al_map_rgba_f(color.Red, color.Green, color.Blue, color.Alpha));
+        al_clear_to_color(ToAllegroColor(color));
     }
 }

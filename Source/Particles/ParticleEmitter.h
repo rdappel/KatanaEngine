@@ -15,6 +15,7 @@ namespace KatanaEngine
 			float EmissionRate = 10.0f;		// Particles per second
 			bool IsLooping = true;
 			float Duration = 1.0f;			// For non-looping emitters
+			BlendState Blend = BlendState::ALPHA_BLEND;	// Used by DrawBatch()
 
 			EmitterConfig() = default;
 		};
@@ -81,6 +82,10 @@ namespace KatanaEngine
 				}
 			}
 
+			BlendState GetBlendState() const { return m_config.Blend; }
+			void SetBlendState(BlendState blendState) { m_config.Blend = blendState; }
+
+			// Draws into a batch the caller has already begun (its blend state applies).
 			void Draw(SpriteBatch& spriteBatch)
 			{
 				if (!m_drawer) return;
@@ -91,6 +96,14 @@ namespace KatanaEngine
 
 					m_drawer->Draw(particle, spriteBatch);
 				}
+			}
+
+			// Begins a batch with this emitter's blend state, draws, and ends it.
+			void DrawBatch(SpriteBatch& spriteBatch)
+			{
+				spriteBatch.Begin(SpriteSortMode::DEFERRED, m_config.Blend);
+				Draw(spriteBatch);
+				spriteBatch.End();
 			}
 
 			int GetActiveParticleCount() const

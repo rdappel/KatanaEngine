@@ -212,6 +212,7 @@
     <ClInclude Include="Source\Particles\Particle.h" />
     <ClInclude Include="Source\Particles\ParticleBehaviors.h" />
     <ClInclude Include="Source\Particles\ParticleEmitter.h" />
+    <ClInclude Include="Source\Particles\SimpleParticleDrawers.h" />
     <ClInclude Include="Source\Core\Interfaces\IBounded.h" />
     <ClInclude Include="Source\Core\Interfaces\ICameraTarget.h" />
     <ClInclude Include="Source\Core\Camera.h" />

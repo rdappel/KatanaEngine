@@ -38,11 +38,15 @@ namespace KatanaEngine
         FRONT_TO_BACK   // Sprites are sorted by layer depth, front to back (depth 0 drawn first)
     };
 
+    // Textures are loaded with premultiplied alpha and tint/primitive colors are premultiplied
+    // on their way to Allegro (see PlatformColor.h), so these blend modes are premultiplied:
+    // Color tints stay straight alpha in engine code (Color(1, 1, 1, 0.5f) = half transparent).
+    // Custom shaders (Effect) must output premultiplied color: float4(rgb * a, a).
     enum class BlendState
     {
-        ALPHA_BLEND,        // Standard alpha blending (default)
-        ADDITIVE,           // Additive blending (good for glow, particles)
-        NON_PREMULTIPLIED,  // Alpha blend for non-premultiplied textures
+        ALPHA_BLEND,        // Standard alpha blending (default): src + dst * (1 - srcAlpha)
+        ADDITIVE,           // Additive blending (glow, fire, sparks): src + dst; alpha fades the contribution
+        NON_PREMULTIPLIED,  // For bitmaps loaded with ALLEGRO_NO_PREMULTIPLIED_ALPHA (opaque tints only)
         OPAQUE              // No blending, overwrites destination
     };
 
