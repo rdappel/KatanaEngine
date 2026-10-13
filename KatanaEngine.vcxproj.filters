@@ -58,10 +58,15 @@
     <ClInclude Include="Source\Core\Services\EngineServices.h" />
     <ClInclude Include="Source\Core\Input\MouseCursor.h" />
     <ClInclude Include="Source\Core\Platform\PlatformMouseCursor.h" />
+    <ClInclude Include="Source\Core\Platform\WindowEmbedding.h" />
+    <ClInclude Include="Source\Core\Hosting\GameHost.h" />
+    <ClInclude Include="Source\Core\Hosting\HostExports.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\pch.cpp" />
     <ClCompile Include="Source\Core\Game.cpp" />
+    <ClCompile Include="Source\Core\Platform\WindowEmbedding.cpp" />
+    <ClCompile Include="Source\Core\Hosting\GameHost.cpp" />
     <ClCompile Include="Source\Core\Resource\ResourceManager.cpp" />
     <ClCompile Include="Source\Core\Graphics\Color.cpp" />
     <ClCompile Include="Source\Core\Screens\ColorFadeScreen.cpp" />

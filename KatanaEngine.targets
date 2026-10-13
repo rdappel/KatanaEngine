@@ -47,6 +47,22 @@
   <Import Project="$(KatanaAllegroDepsTargets)" Condition="Exists('$(KatanaAllegroDepsTargets)')" />
   <Import Project="$(KatanaAllegroTargets)" Condition="Exists('$(KatanaAllegroTargets)')" />
 
+  <!--
+    Allegro's "magic main" (allegro5/platform/alwin.h) adds /ENTRY:mainCRTStartup to every object that
+    includes Allegro. Libraries must not carry it, or any DLL linking them gets an exe entry point.
+    Applications still get it from their own sources.
+  -->
+  <ItemDefinitionGroup Condition="'$(ConfigurationType)' == 'StaticLibrary' or '$(ConfigurationType)' == 'DynamicLibrary'">
+    <ClCompile>
+      <PreprocessorDefinitions>ALLEGRO_NO_MAGIC_MAIN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+
+  <!-- DLLs (e.g. games hosted in KatanaEngine.WinForms) have no main(): link Allegro without allegro_main. -->
+  <PropertyGroup Condition="'$(ConfigurationType)' == 'DynamicLibrary' and '$(Allegro_LibraryType)' != 'StaticMonolithRelease'">
+    <Allegro_CoreLibs>$(AllegroLib)allegro$(AllegroSuffix).lib</Allegro_CoreLibs>
+  </PropertyGroup>
+
   <Target Name="KatanaEnsureAllegro" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <KatanaMissingPackageText>Allegro NuGet packages are missing from $(KatanaPackagesDir). Restore NuGet packages for the solution (KatanaEngine/packages.config). Missing file: {0}</KatanaMissingPackageText>

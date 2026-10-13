@@ -6,6 +6,7 @@
 #include "Platform/PlatformContext.h"
 #include "Platform/PlatformColor.h"
 #include "Platform/PlatformMouseCursor.h"
+#include "Platform/WindowEmbedding.h"
 #include "Services/EngineServices.h"
 
 // Services (optional)
@@ -24,6 +25,8 @@
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_audio.h>
 #include <allegro5/allegro_acodec.h>
+
+#include <climits>
 
 namespace KatanaEngine
 {
@@ -99,7 +102,13 @@ namespace KatanaEngine
 
 	bool Game::InitializeAllegro()
 	{
-		if (!al_init())
+		// Hosted games live in a DLL: an atexit handler would run al_uninstall_system under the
+		// loader lock at process exit and deadlock. GameHost uninstalls Allegro explicitly instead.
+		const bool installed = m_config.ParentWindow
+			? al_install_system(ALLEGRO_VERSION_INT, nullptr)
+			: al_init();
+
+		if (!installed)
 		{
 			std::cerr << "ERROR: Failed to initialize Allegro core library" << std::endl;
 			return false;
@@ -136,9 +145,21 @@ namespace KatanaEngine
 		al_install_keyboard();
 		al_install_mouse();
 
-		const int baseDisplayFlags = m_config.Fullscreen
-			? ALLEGRO_FULLSCREEN_WINDOW
-			: (ALLEGRO_WINDOWED | ALLEGRO_RESIZABLE);
+		const bool isHosted = m_config.ParentWindow != nullptr;
+
+		const int baseDisplayFlags = isHosted
+			? (ALLEGRO_WINDOWED | ALLEGRO_FRAMELESS)
+			: m_config.Fullscreen
+				? ALLEGRO_FULLSCREEN_WINDOW
+				: (ALLEGRO_WINDOWED | ALLEGRO_RESIZABLE);
+
+		if (isHosted)
+		{
+			// Match the host's client area and create the window offscreen so it never
+			// flashes as a top-level window before it is embedded.
+			Platform::GetParentClientSize(m_config.ParentWindow, m_screenWidth, m_screenHeight);
+			al_set_new_window_position(-32000, -32000);
+		}
 
 		// Try to create display with shader support
 		// On Windows, try Direct3D first (better compatibility), then OpenGL
@@ -248,6 +269,17 @@ namespace KatanaEngine
 			std::cout << "WARNING: Custom shaders will NOT work." << std::endl;
 		}
 
+		if (isHosted)
+		{
+			al_set_new_window_position(INT_MAX, INT_MAX);  // restore default placement for later displays
+
+			if (!Platform::EmbedDisplay(m_pContext->pDisplay.get(), m_config.ParentWindow))
+			{
+				std::cerr << "ERROR: Failed to embed display in host window" << std::endl;
+				return false;
+			}
+		}
+
 		UpdateScreenSizeFromDisplay();
 		al_set_window_title(m_pContext->pDisplay.get(), m_title.c_str());
 
@@ -301,6 +333,8 @@ namespace KatanaEngine
 		LoadContent(m_resourceManager);
 		m_isInitialized = true;
 
+		if (m_startedCallback) m_startedCallback();
+
 		m_isRunning = true;
 		m_previousTime = al_get_time();
 		al_start_timer(m_pContext->pTimer.get());
@@ -317,6 +351,12 @@ namespace KatanaEngine
 		{
 			ALLEGRO_EVENT event;
 			al_wait_for_event(m_pContext->pEventQueue.get(), &event);
+
+			if (m_hasHostRequests.load(std::memory_order_acquire))
+			{
+				ProcessHostRequests();
+				if (!m_isRunning) break;
+			}
 
 			if (event.type == ALLEGRO_EVENT_DISPLAY_CLOSE)
 			{
@@ -364,5 +404,70 @@ namespace KatanaEngine
 				al_flip_display();
 			}
 		}
+	}
+
+	void Game::RequestExit()
+	{
+		std::lock_guard<std::mutex> lock(m_hostMutex);
+		m_exitRequested = true;
+		m_hasHostRequests.store(true, std::memory_order_release);
+	}
+
+	void Game::RequestResize(int width, int height)
+	{
+		if (width <= 0 || height <= 0) return;
+
+		std::lock_guard<std::mutex> lock(m_hostMutex);
+		m_requestedWidth = width;
+		m_requestedHeight = height;
+		m_hasHostRequests.store(true, std::memory_order_release);
+	}
+
+	void Game::PostHostMessage(const std::string& message)
+	{
+		std::lock_guard<std::mutex> lock(m_hostMutex);
+		m_pendingHostMessages.push_back(message);
+		m_hasHostRequests.store(true, std::memory_order_release);
+	}
+
+	void Game::SendHostMessage(const std::string& message) const
+	{
+		if (m_hostMessageCallback) m_hostMessageCallback(message);
+	}
+
+	void Game::ProcessHostRequests()
+	{
+		bool exitRequested = false;
+		int width = 0;
+		int height = 0;
+
+		{
+			std::lock_guard<std::mutex> lock(m_hostMutex);
+			exitRequested = m_exitRequested;
+			width = m_requestedWidth;
+			height = m_requestedHeight;
+			m_requestedWidth = 0;
+			m_requestedHeight = 0;
+			m_processingHostMessages.swap(m_pendingHostMessages);
+			m_hasHostRequests.store(false, std::memory_order_release);
+		}
+
+		if (exitRequested)
+		{
+			m_isRunning = false;
+			return;
+		}
+
+		if (width > 0 && height > 0 && m_config.ParentWindow)
+		{
+			Platform::ResizeEmbeddedDisplay(m_pContext->pDisplay.get(), width, height);
+			UpdateScreenSizeFromDisplay();
+		}
+
+		for (const auto& message : m_processingHostMessages)
+		{
+			OnHostMessage(message);
+		}
+		m_processingHostMessages.clear();
 	}
 }

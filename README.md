@@ -212,6 +212,36 @@ KatanaEngine is a static library (.lib). Games include it as a git submodule at 
 - `KatanaEngine.targets` imports Allegro, enables the addons the engine needs, and picks the Allegro library type: static libraries get `StaticMonolithRelease`, applications get `DynamicDebug` / `DynamicRelease`, and the DLLs are copied next to the exe. Any `Allegro_*` property a project sets itself overrides these defaults.
 - The game does **not** need Allegro in its own `packages.config`. Restoring NuGet packages for the solution restores them through the engine project.
 
+### Hosting a game inside a WinForms app
+A game can run inside a .NET WinForms window, e.g. as the viewport of an editor or tool. The Allegro window becomes a borderless child of a WinForms control. The game runs on its own thread, and the two sides exchange string messages.
+
+**Native side (C++ DLL):**
+1. Make the game project a DLL (`<ConfigurationType>DynamicLibrary</ConfigurationType>`) and import the engine `.props`/`.targets` as above. The `.targets` file removes Allegro's "magic main" and `allegro_main` for DLLs.
+2. In one `.cpp` file:
+   ```cpp
+   #include "Core/Hosting/HostExports.h"
+
+   std::unique_ptr<KatanaEngine::Game> CreateHostedGame(const KatanaEngine::GameConfig& config)
+   {
+       return std::make_unique<MyGame>(config);  // config.ParentWindow is already set
+   }
+
+   KATANA_DEFINE_HOST_EXPORTS(CreateHostedGame)
+   ```
+3. In the game, override `OnHostMessage(const std::string&)` to receive messages, and call `SendHostMessage(...)` to reply.
+
+**Managed side (C#):**
+1. Reference `KatanaEngine\WinForms\KatanaEngine.WinForms.csproj` (net10.0-windows).
+2. Add a `KatanaViewport` control, set `GameLibraryPath = "MyGame.dll"`, then use `Post(message)` and the `MessageReceived` event (raised on the UI thread).
+3. Copy the game DLL and its Allegro DLLs next to the app's exe, e.g. with an `AfterBuild` copy target.
+
+**How it works** (`Source/Core/Hosting/GameHost.*`, `Source/Core/Platform/WindowEmbedding.*`):
+- `GameConfig.ParentWindow` creates the window offscreen and frameless, then makes it a child of the host window (`SetParent`).
+- `Game::RequestExit`, `RequestResize` and `PostHostMessage` are thread-safe. The game thread applies them at the start of its next loop iteration.
+- `GameHost::Start` and `Stop` keep servicing window messages sent to the UI thread while they wait. Without that, the parent and child windows (which live on different threads) can deadlock.
+- Hosted games install Allegro without `atexit` and uninstall it when the game thread ends. Uninstalling at DLL unload would deadlock under the loader lock.
+- One hosted game per DLL. The DLL stays loaded for the life of the process.
+
 ## Dependencies
 - **Allegro 5** (via NuGet packages; `packages.config` is the single source of truth for the versions)
 - **C++17 or later**

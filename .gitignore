@@ -10,3 +10,7 @@ packages/
 *.suo
 *.VC.db
 *.VC.opendb
+
+# .NET (WinForms project)
+bin/
+obj/

@@ -1,7 +1,11 @@
 #pragma once
 
+#include <atomic>
+#include <functional>
 #include <memory>
+#include <mutex>
 #include <string>
+#include <vector>
 
 #include "Input/InputState.h"
 #include "Input/MouseCursor.h"
@@ -30,6 +34,11 @@ namespace KatanaEngine
 		int ScreenHeight = 900;
 		bool Fullscreen = false;
 		bool PreferDirect3D = false;  // On Windows, prefer D3D over OpenGL
+
+		// Windows only: when set (an HWND), the game window is embedded as a borderless child
+		// filling this window's client area instead of opening its own top-level window.
+		// See Core/Hosting/GameHost.h for running a hosted game from another application.
+		void* ParentWindow = nullptr;
 	};
 
 	class Game
@@ -70,7 +79,21 @@ namespace KatanaEngine
 		const ResourceManager& GetResourceManager() const { return m_resourceManager; }
 
 		GraphicsBackend GetGraphicsBackend() const { return m_graphicsBackend; }
-		
+
+		// --- Hosting (see Core/Hosting/GameHost.h) ---
+		// These are safe to call from any thread; requests are applied on the game thread
+		// at the start of the next loop iteration.
+
+		using HostMessageCallback = std::function<void(const std::string&)>;
+
+		void RequestExit();
+		void RequestResize(int width, int height);
+		void PostHostMessage(const std::string& message);
+
+		// Set before Run(). Called on the game thread.
+		void SetHostMessageCallback(HostMessageCallback callback) { m_hostMessageCallback = std::move(callback); }
+		void SetStartedCallback(std::function<void()> callback) { m_startedCallback = std::move(callback); }
+
 	protected:
 		void Clear(const Color& color);
 
@@ -81,11 +104,18 @@ namespace KatanaEngine
 		virtual void Update(const GameTime& gameTime) = 0;
 		virtual void Draw(SpriteBatch& spriteBatch) = 0;
 
+		// Called on the game thread for each message posted with PostHostMessage().
+		virtual void OnHostMessage(const std::string& message) {}
+
+		// Sends a message to the hosting application (no-op when not hosted).
+		void SendHostMessage(const std::string& message) const;
+
 	private:
 		bool InitializeAllegro();
 		int Shutdown();
 		void GameLoop();
 		void UpdateScreenSizeFromDisplay();
+		void ProcessHostRequests();
 
 	private:
 		std::unique_ptr<PlatformContext> m_pContext;
@@ -112,6 +142,18 @@ namespace KatanaEngine
 
 		bool m_isRunning = false;
 		bool m_isInitialized = false;
+
+		// Hosting: written by other threads, read on the game thread.
+		std::atomic<bool> m_hasHostRequests{ false };
+		std::mutex m_hostMutex;
+		bool m_exitRequested = false;
+		int m_requestedWidth = 0;
+		int m_requestedHeight = 0;
+		std::vector<std::string> m_pendingHostMessages;
+		std::vector<std::string> m_processingHostMessages;
+
+		HostMessageCallback m_hostMessageCallback;
+		std::function<void()> m_startedCallback;
 
 		static const int MAX_FRAME_SKIP = 5;
 	};

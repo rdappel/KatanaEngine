@@ -157,6 +157,9 @@
   <ItemGroup>
     <ClInclude Include="Source\Core\Input\MouseCursor.h" />
     <ClInclude Include="Source\Core\Platform\PlatformMouseCursor.h" />
+    <ClInclude Include="Source\Core\Platform\WindowEmbedding.h" />
+    <ClInclude Include="Source\Core\Hosting\GameHost.h" />
+    <ClInclude Include="Source\Core\Hosting\HostExports.h" />
     <ClInclude Include="Source\Core\Save\SaveManager.h" />
     <ClInclude Include="Source\Core\Save\SaveData.h" />
     <ClInclude Include="Source\Core\Interfaces\IRenderContext.h" />
@@ -242,6 +245,8 @@
     <ClCompile Include="Source\Core\Graphics\Color.cpp" />
     <ClCompile Include="Source\Core\Resource\ResourceManager.cpp" />
     <ClCompile Include="Source\Core\Game.cpp" />
+    <ClCompile Include="Source\Core\Platform\WindowEmbedding.cpp" />
+    <ClCompile Include="Source\Core\Hosting\GameHost.cpp" />
     <ClCompile Include="Source\Core\Graphics\SpriteBatch.cpp" />
     <ClCompile Include="Source\Core\Math\Vector2.cpp" />
     <ClCompile Include="Source\Core\Resource\Texture.cpp" />
