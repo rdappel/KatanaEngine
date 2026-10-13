@@ -181,18 +181,46 @@ public:
 ```
 
 ## Building
-KatanaEngine is a static library (.lib) that automatically builds before dependent projects in the solution.
+KatanaEngine is a static library (.lib). Games include it as a git submodule at `<GameRepo>/KatanaEngine/` and add `KatanaEngine.vcxproj` to their solution, so it builds before them.
 
 ### Build Output
-- **Debug**: `KatanaEngine\Build\x64\Debug\KatanaEngine.lib`
-- **Release**: `KatanaEngine\Build\x64\Release\KatanaEngine.lib`
+`KatanaEngine\Build\<x64|x86>\<Debug|Release>\KatanaEngine.lib`
+
+### Using KatanaEngine in a game
+1. Add the submodule: `git submodule add https://github.com/rdappel/KatanaEngine.git KatanaEngine`
+2. Add `KatanaEngine\KatanaEngine.vcxproj` to the game's `.slnx`.
+3. In the game's `.vcxproj`:
+   ```xml
+   <!-- just before <PropertyGroup Label="UserMacros" /> -->
+   <ImportGroup Label="PropertySheets">
+     <Import Project="..\KatanaEngine\KatanaEngine.props" />
+   </ImportGroup>
+
+   <!-- just before Microsoft.Cpp.targets -->
+   <ItemGroup>
+     <ProjectReference Include="..\KatanaEngine\KatanaEngine.vcxproj">
+       <Project>{467fb328-bb2b-4bcc-945e-41b96754a22d}</Project>
+     </ProjectReference>
+   </ItemGroup>
+
+   <!-- inside <ImportGroup Label="ExtensionTargets"> -->
+   <Import Project="..\KatanaEngine\KatanaEngine.targets" />
+   ```
+   Adjust the `..\` paths to wherever the project sits relative to the submodule.
+
+- `KatanaEngine.props` adds the engine's `Source` folder to the include path.
+- `KatanaEngine.targets` imports Allegro, enables the addons the engine needs, and picks the Allegro library type: static libraries get `StaticMonolithRelease`, applications get `DynamicDebug` / `DynamicRelease`, and the DLLs are copied next to the exe. Any `Allegro_*` property a project sets itself overrides these defaults.
+- The game does **not** need Allegro in its own `packages.config`. Restoring NuGet packages for the solution restores them through the engine project.
 
 ## Dependencies
-- **Allegro 5** (via NuGet packages)
-  - Allegro.5.2.11.3
-  - AllegroDeps.1.16.0
+- **Allegro 5** (via NuGet packages; `packages.config` is the single source of truth for the versions)
 - **C++17 or later**
 - **Platform**: Windows (Visual Studio 2019+)
+
+### Upgrading Allegro
+1. Change the versions in `KatanaEngine/packages.config` only. `KatanaEngine.targets` reads them from there. Don't use the NuGet UI: it would add hard-coded imports back into `KatanaEngine.vcxproj`.
+2. Restore packages (`msbuild <solution> -t:restore -p:RestorePackagesConfig=true`), build and fix the engine, then commit and push it.
+3. Each game picks up the new Allegro version when it updates its `KatanaEngine` submodule.
 
 ## Project Structure
 ```
@@ -211,7 +239,10 @@ KatanaEngine/
 │   ├── GUI/            # User interface controls
 │   ├── Particles/      # Particle system
 │   └── pch.h/cpp       # Precompiled header
-└── Build/              # Output directory
+├── KatanaEngine.props   # Import into consuming projects (include path)
+├── KatanaEngine.targets # Import into consuming projects (Allegro setup)
+├── packages.config      # Allegro NuGet versions
+└── Build/               # Output directory
 ```
 
 ## Configuration

@@ -1,0 +1,12 @@
+# Build output
+Build/
+
+# NuGet packages (restored next to the consuming solution, or here when built standalone)
+packages/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.VC.db
+*.VC.opendb

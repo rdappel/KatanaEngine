@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Import from any project that uses KatanaEngine, near the top of the .vcxproj
+  (after Microsoft.Cpp.props). Pair with KatanaEngine.targets at the bottom.
+-->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <KatanaEngineDir>$(MSBuildThisFileDirectory)</KatanaEngineDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(KatanaEngineDir)Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+</Project>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Allegro setup shared by KatanaEngine and every project that uses it.
+  Import at the bottom of the .vcxproj (after Microsoft.Cpp.targets).
+
+  The Allegro versions are read from KatanaEngine/packages.config, so upgrading
+  Allegro only means changing that file and restoring packages.
+
+  Projects may set any Allegro_* property themselves to override the defaults below.
+-->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <KatanaPackagesConfig>$([System.IO.File]::ReadAllText('$(MSBuildThisFileDirectory)packages.config'))</KatanaPackagesConfig>
+    <KatanaAllegroVersion>$([System.Text.RegularExpressions.Regex]::Match($(KatanaPackagesConfig), 'id="Allegro" version="([^"]+)"').Groups[1].Value)</KatanaAllegroVersion>
+    <KatanaAllegroDepsVersion>$([System.Text.RegularExpressions.Regex]::Match($(KatanaPackagesConfig), 'id="AllegroDeps" version="([^"]+)"').Groups[1].Value)</KatanaAllegroDepsVersion>
+
+    <!-- NuGet (packages.config) restores into <solution>\packages; fall back to the engine's parent folder when building without a solution. -->
+    <KatanaPackagesDir Condition="'$(KatanaPackagesDir)' == '' and '$(SolutionDir)' != '' and '$(SolutionDir)' != '*Undefined*' and Exists('$(SolutionDir)packages')">$(SolutionDir)packages\</KatanaPackagesDir>
+    <KatanaPackagesDir Condition="'$(KatanaPackagesDir)' == ''">$(MSBuildThisFileDirectory)..\packages\</KatanaPackagesDir>
+
+    <KatanaAllegroTargets>$(KatanaPackagesDir)Allegro.$(KatanaAllegroVersion)\build\native\Allegro.targets</KatanaAllegroTargets>
+    <KatanaAllegroDepsTargets>$(KatanaPackagesDir)AllegroDeps.$(KatanaAllegroDepsVersion)\build\native\AllegroDeps.targets</KatanaAllegroDepsTargets>
+  </PropertyGroup>
+
+  <!-- Addons the engine relies on. -->
+  <PropertyGroup>
+    <Allegro_AddonImage Condition="'$(Allegro_AddonImage)' == ''">true</Allegro_AddonImage>
+    <Allegro_AddonTTF Condition="'$(Allegro_AddonTTF)' == ''">true</Allegro_AddonTTF>
+    <Allegro_AddonPrimitives Condition="'$(Allegro_AddonPrimitives)' == ''">true</Allegro_AddonPrimitives>
+    <Allegro_AddonAudio Condition="'$(Allegro_AddonAudio)' == ''">true</Allegro_AddonAudio>
+    <Allegro_AddonAcodec Condition="'$(Allegro_AddonAcodec)' == ''">true</Allegro_AddonAcodec>
+    <Allegro_AddonPhysfs Condition="'$(Allegro_AddonPhysfs)' == ''">true</Allegro_AddonPhysfs>
+    <Allegro_AddonDialog Condition="'$(Allegro_AddonDialog)' == ''">true</Allegro_AddonDialog>
+    <Allegro_AddonMemfile Condition="'$(Allegro_AddonMemfile)' == ''">true</Allegro_AddonMemfile>
+    <Allegro_AddonFont Condition="'$(Allegro_AddonFont)' == ''">true</Allegro_AddonFont>
+    <Allegro_AddonColor Condition="'$(Allegro_AddonColor)' == ''">true</Allegro_AddonColor>
+    <Allegro_AddonVideo Condition="'$(Allegro_AddonVideo)' == ''">true</Allegro_AddonVideo>
+  </PropertyGroup>
+
+  <!-- Static libraries never link Allegro themselves; applications link the DLLs (copied next to the exe). -->
+  <PropertyGroup>
+    <Allegro_LibraryType Condition="'$(Allegro_LibraryType)' == '' and '$(ConfigurationType)' == 'StaticLibrary'">StaticMonolithRelease</Allegro_LibraryType>
+    <Allegro_LibraryType Condition="'$(Allegro_LibraryType)' == '' and '$(UseDebugLibraries)' == 'true'">DynamicDebug</Allegro_LibraryType>
+    <Allegro_LibraryType Condition="'$(Allegro_LibraryType)' == ''">DynamicRelease</Allegro_LibraryType>
+  </PropertyGroup>
+
+  <Import Project="$(KatanaAllegroDepsTargets)" Condition="Exists('$(KatanaAllegroDepsTargets)')" />
+  <Import Project="$(KatanaAllegroTargets)" Condition="Exists('$(KatanaAllegroTargets)')" />
+
+  <Target Name="KatanaEnsureAllegro" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <KatanaMissingPackageText>Allegro NuGet packages are missing from $(KatanaPackagesDir). Restore NuGet packages for the solution (KatanaEngine/packages.config). Missing file: {0}</KatanaMissingPackageText>
+    </PropertyGroup>
+    <Error Condition="'$(KatanaAllegroVersion)' == '' or '$(KatanaAllegroDepsVersion)' == ''" Text="Could not read the Allegro / AllegroDeps versions from $(MSBuildThisFileDirectory)packages.config." />
+    <Error Condition="!Exists('$(KatanaAllegroDepsTargets)')" Text="$([System.String]::Format('$(KatanaMissingPackageText)', '$(KatanaAllegroDepsTargets)'))" />
+    <Error Condition="!Exists('$(KatanaAllegroTargets)')" Text="$([System.String]::Format('$(KatanaMissingPackageText)', '$(KatanaAllegroTargets)'))" />
+  </Target>
+</Project>
