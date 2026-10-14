@@ -9,6 +9,7 @@
 #include "Core/Resource/Font.h"
 #include "Core/Platform/PlatformFont.h"
 #include "Core/Resource/AnimationSet.h"
+#include "Core/Math/Curve.h"
 #include "Core/Resource/Effect.h"
 
 #include <filesystem>
@@ -227,6 +228,28 @@ namespace KatanaEngine
 
         m_resourceCache[cacheKey] = animSet;
         return animSet;
+    }
+
+    template<>
+    std::shared_ptr<Curve> ResourceManager::Load<Curve>(const std::string& path)
+    {
+        std::string cacheKey = MakeCacheKey(typeid(Curve), path);
+
+        auto it = m_resourceCache.find(cacheKey);
+        if (it != m_resourceCache.end())
+        {
+            return std::static_pointer_cast<Curve>(it->second);
+        }
+
+        auto curve = std::make_shared<Curve>();
+        if (!curve->LoadFromFile(MakeFullPath(path)))
+        {
+            LogResourceError("Failed to load curve: " + path);
+            return nullptr;
+        }
+
+        m_resourceCache[cacheKey] = curve;
+        return curve;
     }
 
     template<>

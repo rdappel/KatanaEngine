@@ -206,6 +206,7 @@
     <ClInclude Include="Source\Core\Resource\RenderTarget.h" />
     <ClInclude Include="Source\Core\Resource\Image.h" />
     <ClInclude Include="Source\Core\Resource\TextResource.h" />
+    <ClInclude Include="Source\Core\Math\Curve.h" />
     <ClInclude Include="Source\Core\Math\Spline.h" />
     <ClInclude Include="Source\GUI\Control.h" />
     <ClInclude Include="Source\GUI\Textbox.h" />
@@ -254,6 +255,7 @@
     <ClCompile Include="Source\Core\Resource\Texture.cpp" />
     <ClCompile Include="Source\Core\Resource\RenderTarget.cpp" />
     <ClCompile Include="Source\Core\Resource\Image.cpp" />
+    <ClCompile Include="Source\Core\Math\Curve.cpp" />
     <ClCompile Include="Source\Core\Math\Spline.cpp" />
     <ClCompile Include="Source\GUI\Control.cpp" />
     <ClCompile Include="Source\GUI\Textbox.cpp" />

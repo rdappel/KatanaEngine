@@ -35,6 +35,7 @@
     <ClInclude Include="Source\Core\Resource\TextResource.h" />
     <ClInclude Include="Source\Core\Platform\PlatformInput.h" />
     <ClInclude Include="Source\Core\Math\Line.h" />
+    <ClInclude Include="Source\Core\Math\Curve.h" />
     <ClInclude Include="Source\Core\Math\Spline.h" />
     <ClInclude Include="Source\Core\Math\Circle.h" />
     <ClInclude Include="Source\Core\Math\Rectangle.h" />
@@ -90,6 +91,7 @@
     <ClCompile Include="Source\Core\Resource\Music.cpp" />
     <ClCompile Include="Source\Core\Resource\Sound.cpp" />
     <ClCompile Include="Source\Core\Math\Line.cpp" />
+    <ClCompile Include="Source\Core\Math\Curve.cpp" />
     <ClCompile Include="Source\Core\Math\Spline.cpp" />
     <ClCompile Include="Source\Core\Math\Circle.cpp" />
     <ClCompile Include="Source\Core\Math\Rectangle.cpp" />

@@ -96,6 +96,45 @@ Allegro 5 (platform layer)
 - **Circle**: Circular collision shapes
 - **Line**: Line segments
 - **Math**: Common math operations (lerp, clamp, etc.)
+- **Spline**: A cubic Bézier segment (`Lerp`, drawable with `SpriteBatch::DrawPrimitive`)
+- **Curve**: A 1D keyframed curve compatible with XNA's `Curve` (see below)
+
+#### Curve
+
+`Curve` maps a position (usually time) to a value through keys, like XNA's `Microsoft.Xna.Framework.Curve`: the same keys (`Position`, `Value`, `TangentIn`, `TangentOut`, `Continuity`), `PreLoop` / `PostLoop` (`CONSTANT`, `CYCLE`, `CYCLE_OFFSET`, `OSCILLATE`, `LINEAR`), `ComputeTangent(s)` (`FLAT`, `LINEAR`, `SMOOTH`) and `Evaluate`, giving the same values as XNA. Between keys it uses cubic Hermite interpolation; tangents are per segment, as in XNA. (MonoGame's two known differences are not copied: its Step keys compare the raw position instead of the segment fraction, and its LINEAR post-loop uses the first key's tangent.)
+
+```cpp
+Curve fade;
+fade.AddKey({ 0.0f, 1.0f });
+fade.AddKey({ 0.5f, 0.8f });
+fade.AddKey({ 1.0f, 0.0f });
+fade.ComputeTangents(CurveTangent::SMOOTH);
+float alpha = fade.Evaluate(particle.GetNormalizedAge());
+
+// Or load one (XNA content XML; one curve per file):
+std::shared_ptr<Curve> curve = resourceManager.Load<Curve>("Curves/Fade.xml");
+```
+
+Files use XNA's XML, so curves move freely between XNA, MonoGame (and the XNA Curve Editor sample) and KatanaEngine. `SaveToFile` writes the expanded key form; loading also accepts XNA's compact form (`<Keys>position value tangentIn tangentOut continuity ...</Keys>`).
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<XnaContent xmlns:Framework="Microsoft.Xna.Framework">
+  <Asset Type="Framework:Curve">
+    <PreLoop>Constant</PreLoop>
+    <PostLoop>Constant</PostLoop>
+    <Keys>
+      <CurveKey>
+        <Position>0</Position>
+        <Value>1</Value>
+        <TangentIn>0</TangentIn>
+        <TangentOut>0</TangentOut>
+        <Continuity>Smooth</Continuity>
+      </CurveKey>
+    </Keys>
+  </Asset>
+</XnaContent>
+```
 
 ## Usage Example
 
