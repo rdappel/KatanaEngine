@@ -21,6 +21,7 @@ namespace KatanaEngine
         // Copy current state to previous
         m_previousKeyState = m_currentKeyState;
         m_previousMouseState = m_currentMouseState;
+        m_previousMouseWheelZ = m_mouseWheelZ;
 
         // Get current keyboard state from Allegro
         ALLEGRO_KEYBOARD_STATE keyboardState;
@@ -49,6 +50,7 @@ namespace KatanaEngine
         // Update mouse position
         m_mousePosition.X = static_cast<float>(mouseState.x);
         m_mousePosition.Y = static_cast<float>(mouseState.y);
+        m_mouseWheelZ = mouseState.z;
 
         // Update mouse button states
         m_currentMouseState[static_cast<int>(MouseButton::LEFT)] = (mouseState.buttons & 1) != 0;

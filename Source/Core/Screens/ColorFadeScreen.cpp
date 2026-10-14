@@ -107,12 +107,8 @@ namespace KatanaEngine
 		else
 		{
 			// Fallback: Draw solid color rectangle with alpha blending
-			// Multiply the fade color's alpha by the overlay amount
-			Color fadeColor = m_color;
-			fadeColor.Alpha *= overlayAmount;
-
 			spriteBatch.Begin(SpriteSortMode::DEFERRED, BlendState::ALPHA_BLEND);
-			spriteBatch.DrawPrimitive(screenRect, fadeColor, Color::TRANSPARENT);
+			spriteBatch.DrawPrimitive(screenRect, m_color * overlayAmount, Color::TRANSPARENT);
 			spriteBatch.End();
 		}
 	}

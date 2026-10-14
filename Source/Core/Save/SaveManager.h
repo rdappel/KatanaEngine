@@ -17,6 +17,9 @@ namespace KatanaEngine
         SaveData CreateSave() const;
         void LoadSave(const SaveData& data);
 
+        bool SaveToFile(const std::string& path) const;
+        bool LoadFromFile(const std::string& path);
+
     private:
 
         std::vector<ISaveable*> m_saveables;

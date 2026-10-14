@@ -28,16 +28,16 @@ namespace KatanaEngine
 
 			bool isMousePressed = input.IsMouseButtonDown(MouseButton::LEFT);
 
-			if (m_isHovered && isMousePressed && !m_wasMousePressed)
+			if (m_isHovered && input.IsMouseButtonReleased(MouseButton::LEFT) && m_wasMousePressed)
 			{
 				SetChecked(!m_isChecked);
 			}
 
-			m_wasMousePressed = isMousePressed;
+			m_wasMousePressed = m_isHovered && isMousePressed;
 
 			if (IsFocused())
 			{
-				if (input.IsKeyPressed(Keys::ENTER) || input.IsKeyPressed(Keys::SPACE))
+				if (input.IsKeyReleased(Keys::ENTER) || input.IsKeyReleased(Keys::SPACE))
 				{
 					SetChecked(!m_isChecked);
 				}

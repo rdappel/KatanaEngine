@@ -120,7 +120,9 @@ namespace KatanaEngine
 			FocusPrevious();
 		}
 
-		if (inputState.IsKeyPressed(Keys::ENTER) || inputState.IsKeyPressed(Keys::SPACE))
+		if (inputState.IsKeyReleased(Keys::ENTER) ||
+			inputState.IsKeyReleased(Keys::SPACE) ||
+			inputState.IsKeyReleased(Keys::E))
 		{
 			SelectFocused();
 		}
@@ -143,7 +145,7 @@ namespace KatanaEngine
 		if (hoveredIndex >= 0)
 		{
 			SetFocus(hoveredIndex);
-			if (inputState.IsMouseButtonPressed(MouseButton::LEFT))
+			if (inputState.IsMouseButtonReleased(MouseButton::LEFT))
 			{
 				SelectFocused();
 			}

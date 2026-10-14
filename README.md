@@ -45,9 +45,9 @@ Allegro 5 (platform layer)
   - Primitive shapes (rectangles, circles, lines)
   - Camera/viewport support
   
-- **Color**: RGB/RGBA color representation with named colors
+- **Color**: RGB/RGBA color (straight alpha; `SpriteBatch` premultiplies) with the CSS named colors (`Color::CORNFLOWER_BLUE`, ...). `color * opacity` scales only the alpha, so `Color::WHITE * opacity` fades a sprite
 - **Camera**: 2D camera with position, zoom, and target following
-- **Texture**: Image resource management
+- **Texture**: Image resource management; `Texture::CreateFromBitmap` wraps an `ALLEGRO_BITMAP` the caller built (the texture takes ownership)
 
 ### Resource Management
 - **ResourceManager**: Centralized asset loading and caching
@@ -63,7 +63,7 @@ Allegro 5 (platform layer)
 ### Input System
 - **InputState**: Unified input handling
   - Keyboard state (keys pressed, held, released)
-  - Mouse state (position, buttons, wheel)
+  - Mouse state (position, buttons, wheel via `GetMouseWheelDelta()`)
   - Input polling and event detection
 
 ### Screen Management

@@ -26,6 +26,18 @@ namespace KatanaEngine
         m_pData->pBitmap = bitmap;
     }
 
+    std::shared_ptr<Texture> Texture::CreateFromBitmap(ALLEGRO_BITMAP* bitmap)
+    {
+        if (!bitmap)
+        {
+            return nullptr;
+        }
+
+        auto texture = std::shared_ptr<Texture>(new Texture());
+        texture->SetBitmap(bitmap);
+        return texture;
+    }
+
     int Texture::GetWidth() const
     {
         if (m_pData && m_pData->pBitmap)

@@ -25,6 +25,7 @@ namespace KatanaEngine
         int GetHeight() const;
         bool IsValid() const;
         ALLEGRO_BITMAP* GetBitmap() const;
+        static std::shared_ptr<Texture> CreateFromBitmap(ALLEGRO_BITMAP* bitmap);
 
     protected:
         friend class ResourceManager;

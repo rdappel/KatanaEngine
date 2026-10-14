@@ -34,6 +34,7 @@ namespace KatanaEngine
         Vector2 GetMousePosition() const { return m_mousePosition; }
         int GetMouseX() const { return static_cast<int>(m_mousePosition.X); }
         int GetMouseY() const { return static_cast<int>(m_mousePosition.Y); }
+        int GetMouseWheelDelta() const { return m_mouseWheelZ - m_previousMouseWheelZ; }
 
         // Mouse - Current frame state
         bool IsMouseButtonDown(MouseButton button) const;
@@ -59,5 +60,7 @@ namespace KatanaEngine
         std::array<bool, MOUSE_BUTTON_COUNT> m_currentMouseState;
         std::array<bool, MOUSE_BUTTON_COUNT> m_previousMouseState;
         Vector2 m_mousePosition;
+        int m_mouseWheelZ = 0;
+        int m_previousMouseWheelZ = 0;
     };
 }
