@@ -116,6 +116,16 @@ namespace KatanaEngine
 				return count;
 			}
 
+			// Calls fn(const TParticle&) for each live particle, e.g. to measure the effect's bounds.
+			template<typename TFunction>
+			void ForEachActive(TFunction&& fn) const
+			{
+				for (const auto& particle : m_particles)
+				{
+					if (particle.IsAlive) fn(particle);
+				}
+			}
+
 			int GetMaxParticles() const { return m_config.MaxParticles; }
 
 			void Emit(int count = 1)

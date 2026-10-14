@@ -1,0 +1,43 @@
+#pragma once
+
+#include <string>
+
+struct ALLEGRO_BITMAP;
+
+namespace KatanaEngine
+{
+    class Texture;
+
+    // A CPU-side (memory) bitmap for building and saving images, e.g. sprite sheets
+    // assembled from RenderTarget frames. It is not limited by the GPU's maximum
+    // texture size, and it can't be drawn with SpriteBatch.
+    class Image
+    {
+    public:
+        Image() = default;
+        ~Image();
+
+        Image(const Image&) = delete;
+        Image& operator=(const Image&) = delete;
+
+        // Creates a fully transparent image, replacing any previous contents.
+        bool Create(int width, int height);
+
+        // Copies the texture's pixels unchanged (no blending) with its top-left at (x, y).
+        void CopyFrom(const Texture& texture, int x, int y);
+
+        // Saves to a file whose format comes from the extension (.png keeps alpha).
+        // Pixels are stored premultiplied, as everything is drawn; the file is written
+        // with straight alpha, which is what image loaders (including Allegro) expect.
+        bool Save(const std::string& path) const;
+
+        int GetWidth() const;
+        int GetHeight() const;
+        bool IsValid() const { return m_pBitmap != nullptr; }
+
+    private:
+        void Destroy();
+
+        ALLEGRO_BITMAP* m_pBitmap = nullptr;
+    };
+}

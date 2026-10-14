@@ -22,6 +22,7 @@
     <ClInclude Include="Source\Core\Math\Vector2.h" />
     <ClInclude Include="Source\Core\Resource\Texture.h" />
     <ClInclude Include="Source\Core\Resource\RenderTarget.h" />
+    <ClInclude Include="Source\Core\Resource\Image.h" />
     <ClInclude Include="Source\Core\Resource\Font.h" />
     <ClInclude Include="Source\Core\Platform\PlatformTexture.h" />
     <ClInclude Include="Source\Core\Platform\PlatformFont.h" />
@@ -81,6 +82,7 @@
     <ClCompile Include="Source\Core\Math\Vector2.cpp" />
     <ClCompile Include="Source\Core\Resource\Texture.cpp" />
     <ClCompile Include="Source\Core\Resource\RenderTarget.cpp" />
+    <ClCompile Include="Source\Core\Resource\Image.cpp" />
     <ClCompile Include="Source\Core\Resource\Font.cpp" />
     <ClCompile Include="Source\Core\Resource\Animation.cpp" />
     <ClCompile Include="Source\Core\Resource\AnimationSet.cpp" />
