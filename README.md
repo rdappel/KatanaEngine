@@ -58,7 +58,7 @@ Allegro 5 (platform layer)
   
 - **Animation**: Frame-based sprite animation
 - **AnimationSet**: Collections of related animations (walk, run, idle, etc.)
-- **Image**: CPU-side bitmap for assembling and saving images (e.g. sprite sheets built from `RenderTarget` frames); saves straight-alpha PNGs
+- **Image**: CPU-side bitmap for assembling and saving images (e.g. sprite sheets built from `RenderTarget` frames); saves straight-alpha PNGs, and `CopyTo` copies an area back into a `RenderTarget` for drawing
 
 ### Input System
 - **InputState**: Unified input handling

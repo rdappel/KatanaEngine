@@ -55,6 +55,20 @@ namespace KatanaEngine
         al_restore_state(&state);
     }
 
+    void Image::CopyTo(Texture& texture, int sourceX, int sourceY) const
+    {
+        if (!m_pBitmap || !texture.IsValid()) return;
+
+        ALLEGRO_STATE state;
+        al_store_state(&state, ALLEGRO_STATE_TARGET_BITMAP | ALLEGRO_STATE_BLENDER);
+        al_set_target_bitmap(texture.GetBitmap());
+        al_clear_to_color(al_map_rgba(0, 0, 0, 0));
+        al_set_blender(ALLEGRO_ADD, ALLEGRO_ONE, ALLEGRO_ZERO);
+        al_draw_bitmap_region(m_pBitmap, static_cast<float>(sourceX), static_cast<float>(sourceY),
+            static_cast<float>(texture.GetWidth()), static_cast<float>(texture.GetHeight()), 0.0f, 0.0f, 0);
+        al_restore_state(&state);
+    }
+
     bool Image::Save(const std::string& path) const
     {
         if (!m_pBitmap) return false;
