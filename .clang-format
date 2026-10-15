@@ -1,0 +1,41 @@
+# Shared C++ formatting rules. The source of truth is docs/cpp-style-guide.md in
+# rdappel/AltarsOfEternity; keep this copy in sync with the game repo's .clang-format.
+BasedOnStyle: LLVM
+Language: Cpp
+Standard: c++17
+
+# Indentation: tabs for indentation, spaces for alignment
+UseTab: AlignWithSpaces
+IndentWidth: 4
+TabWidth: 4
+ContinuationIndentWidth: 4
+AccessModifierOffset: -4
+NamespaceIndentation: All
+IndentCaseLabels: false
+ColumnLimit: 120
+MaxEmptyLinesToKeep: 1
+
+# Braces: Allman; single-statement bodies stay braceless
+BreakBeforeBraces: Allman
+RemoveBracesLLVM: true
+InsertBraces: false
+AllowShortIfStatementsOnASingleLine: WithoutElse
+AllowShortLoopsOnASingleLine: true
+AllowShortBlocksOnASingleLine: Never
+AllowShortFunctionsOnASingleLine: InlineOnly
+AllowShortCaseLabelsOnASingleLine: false
+
+# Long signatures: one parameter per line, leading-comma initializer lists
+AlignAfterOpenBracket: AlwaysBreak
+BinPackParameters: OnePerLine
+AllowAllParametersOfDeclarationOnNextLine: false
+BinPackArguments: false
+BreakConstructorInitializers: BeforeComma
+PackConstructorInitializers: Never
+
+# Declarations
+PointerAlignment: Left
+FixNamespaceComments: false
+
+# Include order is set by hand (pch.h, own header, project, std)
+SortIncludes: Never
