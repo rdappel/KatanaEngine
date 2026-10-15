@@ -29,6 +29,7 @@ AllowShortCaseLabelsOnASingleLine: false
 AlignAfterOpenBracket: AlwaysBreak
 BinPackParameters: OnePerLine
 AllowAllParametersOfDeclarationOnNextLine: false
+PenaltyReturnTypeOnItsOwnLine: 1000
 BinPackArguments: false
 BreakConstructorInitializers: BeforeComma
 PackConstructorInitializers: Never
