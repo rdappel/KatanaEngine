@@ -8,28 +8,28 @@ struct ALLEGRO_SAMPLE;
 
 namespace KatanaEngine
 {
-    class ResourceManager;
+	class ResourceManager;
 
-    class Sound : public Resource
-    {
-    public:
-        ~Sound();
+	class Sound : public Resource
+	{
+	public:
+		~Sound();
 
-        Sound(Sound&& other) noexcept;
-        Sound& operator=(Sound&& other) noexcept;
+		Sound(Sound&& other) noexcept;
+		Sound& operator=(Sound&& other) noexcept;
 
-        Sound(const Sound&) = delete;
-        Sound& operator=(const Sound&) = delete;
+		Sound(const Sound&) = delete;
+		Sound& operator=(const Sound&) = delete;
 
-        bool IsValid() const;
-        bool Play(float volume = 1.0f, float pan = 0.0f, float speed = 1.0f) const;
+		bool IsValid() const;
+		bool Play(float volume = 1.0f, float pan = 0.0f, float speed = 1.0f) const;
 
-    private:
-        friend class ResourceManager;
+	private:
+		friend class ResourceManager;
 
-        Sound() = default;
-        void SetSample(ALLEGRO_SAMPLE* sample);
+		Sound() = default;
+		void SetSample(ALLEGRO_SAMPLE* sample);
 
-        ALLEGRO_SAMPLE* m_sample = nullptr;
-    };
+		ALLEGRO_SAMPLE* m_sample = nullptr;
+	};
 }

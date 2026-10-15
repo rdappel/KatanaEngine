@@ -8,17 +8,17 @@
 
 namespace KatanaEngine
 {
-    struct Font::FontData
-    {
-        ALLEGRO_FONT* pFont = nullptr;
+	struct Font::FontData
+	{
+		ALLEGRO_FONT* pFont = nullptr;
 
-        ~FontData()
-        {
-            if (pFont)
-            {
-                al_destroy_font(pFont);
-                pFont = nullptr;
-            }
-        }
-    };
+		~FontData()
+		{
+			if (pFont)
+			{
+				al_destroy_font(pFont);
+				pFont = nullptr;
+			}
+		}
+	};
 }

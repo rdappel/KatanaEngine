@@ -13,7 +13,8 @@ namespace KatanaEngine
 			: m_placeholderColor(Color(0.5f, 0.5f, 0.5f))
 			, m_cursorColor(Color::WHITE)
 			, m_focusedBorderColor(Color::YELLOW)
-		{ }
+		{
+		}
 
 		void Textbox::SetText(const std::string& text)
 		{
@@ -62,7 +63,8 @@ namespace KatanaEngine
 					{
 						// Delete word backwards
 						int newPosition = FindPreviousWordBoundary();
-						m_text.erase(static_cast<size_t>(newPosition), static_cast<size_t>(m_cursorPosition - newPosition));
+						m_text.erase(
+							static_cast<size_t>(newPosition), static_cast<size_t>(m_cursorPosition - newPosition));
 						m_cursorPosition = newPosition;
 					}
 					else
@@ -86,7 +88,8 @@ namespace KatanaEngine
 					{
 						// Delete word forwards
 						int endPosition = FindNextWordBoundary();
-						m_text.erase(static_cast<size_t>(m_cursorPosition), static_cast<size_t>(endPosition - m_cursorPosition));
+						m_text.erase(
+							static_cast<size_t>(m_cursorPosition), static_cast<size_t>(endPosition - m_cursorPosition));
 					}
 					else
 					{
@@ -103,13 +106,9 @@ namespace KatanaEngine
 			if (input.IsKeyPressed(Keys::LEFT))
 			{
 				if (isControlDown)
-				{
 					m_cursorPosition = FindPreviousWordBoundary();
-				}
 				else if (m_cursorPosition > 0)
-				{
 					m_cursorPosition--;
-				}
 				m_cursorVisible = true;
 				m_cursorBlinkTimer = 0.0f;
 				return;
@@ -118,13 +117,9 @@ namespace KatanaEngine
 			if (input.IsKeyPressed(Keys::RIGHT))
 			{
 				if (isControlDown)
-				{
 					m_cursorPosition = FindNextWordBoundary();
-				}
 				else if (m_cursorPosition < static_cast<int>(m_text.length()))
-				{
 					m_cursorPosition++;
-				}
 				m_cursorVisible = true;
 				m_cursorBlinkTimer = 0.0f;
 				return;
@@ -157,16 +152,54 @@ namespace KatanaEngine
 
 			// Check all possible character keys
 			Keys keysToCheck[] = {
-				Keys::A, Keys::B, Keys::C, Keys::D, Keys::E, Keys::F, Keys::G, Keys::H,
-				Keys::I, Keys::J, Keys::K, Keys::L, Keys::M, Keys::N, Keys::O, Keys::P,
-				Keys::Q, Keys::R, Keys::S, Keys::T, Keys::U, Keys::V, Keys::W, Keys::X,
-				Keys::Y, Keys::Z,
-				Keys::D0, Keys::D1, Keys::D2, Keys::D3, Keys::D4,
-				Keys::D5, Keys::D6, Keys::D7, Keys::D8, Keys::D9,
-				Keys::SPACE, Keys::COMMA, Keys::PERIOD, Keys::MINUS, Keys::EQUALS,
-				Keys::SEMICOLON, Keys::QUOTE, Keys::SLASH, Keys::BACKSLASH,
-				Keys::LEFT_BRACKET, Keys::RIGHT_BRACKET, Keys::TILDE
-			};
+				Keys::A,
+				Keys::B,
+				Keys::C,
+				Keys::D,
+				Keys::E,
+				Keys::F,
+				Keys::G,
+				Keys::H,
+				Keys::I,
+				Keys::J,
+				Keys::K,
+				Keys::L,
+				Keys::M,
+				Keys::N,
+				Keys::O,
+				Keys::P,
+				Keys::Q,
+				Keys::R,
+				Keys::S,
+				Keys::T,
+				Keys::U,
+				Keys::V,
+				Keys::W,
+				Keys::X,
+				Keys::Y,
+				Keys::Z,
+				Keys::D0,
+				Keys::D1,
+				Keys::D2,
+				Keys::D3,
+				Keys::D4,
+				Keys::D5,
+				Keys::D6,
+				Keys::D7,
+				Keys::D8,
+				Keys::D9,
+				Keys::SPACE,
+				Keys::COMMA,
+				Keys::PERIOD,
+				Keys::MINUS,
+				Keys::EQUALS,
+				Keys::SEMICOLON,
+				Keys::QUOTE,
+				Keys::SLASH,
+				Keys::BACKSLASH,
+				Keys::LEFT_BRACKET,
+				Keys::RIGHT_BRACKET,
+				Keys::TILDE};
 
 			for (Keys key : keysToCheck)
 			{
@@ -217,19 +250,32 @@ namespace KatanaEngine
 
 			switch (key)
 			{
-			case Keys::SPACE:        return ' ';
-			case Keys::COMMA:        return isShiftDown ? '<' : ',';
-			case Keys::PERIOD:       return isShiftDown ? '>' : '.';
-			case Keys::MINUS:        return isShiftDown ? '_' : '-';
-			case Keys::EQUALS:       return isShiftDown ? '+' : '=';
-			case Keys::SEMICOLON:    return isShiftDown ? ':' : ';';
-			case Keys::QUOTE:        return isShiftDown ? '"' : '\'';
-			case Keys::SLASH:        return isShiftDown ? '?' : '/';
-			case Keys::BACKSLASH:    return isShiftDown ? '|' : '\\';
-			case Keys::LEFT_BRACKET: return isShiftDown ? '{' : '[';
-			case Keys::RIGHT_BRACKET:return isShiftDown ? '}' : ']';
-			case Keys::TILDE:        return isShiftDown ? '~' : '`';
-			default: return '\0';
+			case Keys::SPACE:
+				return ' ';
+			case Keys::COMMA:
+				return isShiftDown ? '<' : ',';
+			case Keys::PERIOD:
+				return isShiftDown ? '>' : '.';
+			case Keys::MINUS:
+				return isShiftDown ? '_' : '-';
+			case Keys::EQUALS:
+				return isShiftDown ? '+' : '=';
+			case Keys::SEMICOLON:
+				return isShiftDown ? ':' : ';';
+			case Keys::QUOTE:
+				return isShiftDown ? '"' : '\'';
+			case Keys::SLASH:
+				return isShiftDown ? '?' : '/';
+			case Keys::BACKSLASH:
+				return isShiftDown ? '|' : '\\';
+			case Keys::LEFT_BRACKET:
+				return isShiftDown ? '{' : '[';
+			case Keys::RIGHT_BRACKET:
+				return isShiftDown ? '}' : ']';
+			case Keys::TILDE:
+				return isShiftDown ? '~' : '`';
+			default:
+				return '\0';
 			}
 		}
 
@@ -251,17 +297,11 @@ namespace KatanaEngine
 
 			Color borderColor = m_borderColor;
 			if (!m_isEnabled)
-			{
 				borderColor = Color(0.3f, 0.3f, 0.3f);
-			}
 			else if (m_isFocused)
-			{
 				borderColor = m_focusedBorderColor;
-			}
 			else if (m_isHovered)
-			{
 				borderColor = Color(0.7f, 0.7f, 0.7f);
-			}
 
 			Rectangle rect(m_position.X, m_position.Y, m_size.X, m_size.Y, 2.0f);
 			spriteBatch.DrawPrimitive(rect, m_backgroundColor, borderColor, m_isFocused ? 2.0f : 1.0f);
@@ -316,14 +356,13 @@ namespace KatanaEngine
 
 		bool Textbox::ContainsPoint(const Vector2& point) const
 		{
-			return point.X >= m_position.X && point.X < m_position.X + m_size.X &&
-				point.Y >= m_position.Y && point.Y < m_position.Y + m_size.Y;
+			return point.X >= m_position.X && point.X < m_position.X + m_size.X && point.Y >= m_position.Y &&
+			       point.Y < m_position.Y + m_size.Y;
 		}
 
 		bool Textbox::IsWordCharacter(char c) const
 		{
-			return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') ||
-				(c >= '0' && c <= '9') || c == '_';
+			return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '_';
 		}
 
 		int Textbox::FindPreviousWordBoundary() const

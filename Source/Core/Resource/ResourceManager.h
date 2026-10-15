@@ -39,12 +39,19 @@ namespace KatanaEngine
 		const Game* m_pGame = nullptr;
 	};
 
-    // Explicit template declarations
-    template<> std::shared_ptr<Texture> ResourceManager::Load<Texture>(const std::string& path);
-    template<> std::shared_ptr<Font> ResourceManager::Load<Font>(const std::string& path);
-    template<> std::shared_ptr<AnimationSet> ResourceManager::Load<AnimationSet>(const std::string& path);
-    template<> std::shared_ptr<Curve> ResourceManager::Load<Curve>(const std::string& path);
-    template<> std::shared_ptr<Effect> ResourceManager::Load<Effect>(const std::string& path);
-    template<> std::shared_ptr<Sound> ResourceManager::Load<Sound>(const std::string& path);
-    template<> std::shared_ptr<Music> ResourceManager::Load<Music>(const std::string& path);
+	// Explicit template declarations
+	template<>
+	std::shared_ptr<Texture> ResourceManager::Load<Texture>(const std::string& path);
+	template<>
+	std::shared_ptr<Font> ResourceManager::Load<Font>(const std::string& path);
+	template<>
+	std::shared_ptr<AnimationSet> ResourceManager::Load<AnimationSet>(const std::string& path);
+	template<>
+	std::shared_ptr<Curve> ResourceManager::Load<Curve>(const std::string& path);
+	template<>
+	std::shared_ptr<Effect> ResourceManager::Load<Effect>(const std::string& path);
+	template<>
+	std::shared_ptr<Sound> ResourceManager::Load<Sound>(const std::string& path);
+	template<>
+	std::shared_ptr<Music> ResourceManager::Load<Music>(const std::string& path);
 }

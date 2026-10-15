@@ -10,26 +10,26 @@ namespace KatanaEngine
 	// What a Curve returns outside the range of its keys.
 	enum class CurveLoopType
 	{
-		CONSTANT,		// the first / last key's value
-		CYCLE,			// repeat the curve
-		CYCLE_OFFSET,	// repeat, adding the change across the curve each cycle
-		OSCILLATE,		// repeat, alternating forwards and backwards
-		LINEAR			// extend along the first / last key's tangent
+		CONSTANT,     // the first / last key's value
+		CYCLE,        // repeat the curve
+		CYCLE_OFFSET, // repeat, adding the change across the curve each cycle
+		OSCILLATE,    // repeat, alternating forwards and backwards
+		LINEAR        // extend along the first / last key's tangent
 	};
 
 	// How Curve::ComputeTangent sets a key's tangent.
 	enum class CurveTangent
 	{
-		FLAT,			// zero slope
-		LINEAR,			// towards the neighbouring key
-		SMOOTH			// through both neighbours, scaled for uneven key spacing
+		FLAT,   // zero slope
+		LINEAR, // towards the neighbouring key
+		SMOOTH  // through both neighbours, scaled for uneven key spacing
 	};
 
 	// How the curve leaves a key.
 	enum class CurveContinuity
 	{
-		SMOOTH,			// interpolate to the next key
-		STEP			// hold this key's value until the next key
+		SMOOTH, // interpolate to the next key
+		STEP    // hold this key's value until the next key
 	};
 
 	// A point on a Curve. Tangents are measured per segment (the change over the whole
@@ -71,8 +71,8 @@ namespace KatanaEngine
 		Curve(const Curve&) = default;
 		Curve& operator=(const Curve&) = default;
 
-		CurveLoopType PreLoop = CurveLoopType::CONSTANT;	// before the first key
-		CurveLoopType PostLoop = CurveLoopType::CONSTANT;	// after the last key
+		CurveLoopType PreLoop = CurveLoopType::CONSTANT;  // before the first key
+		CurveLoopType PostLoop = CurveLoopType::CONSTANT; // after the last key
 
 		// The value at position. With no keys it is 0; with one key, that key's value.
 		float Evaluate(float position) const;
@@ -112,6 +112,6 @@ namespace KatanaEngine
 		float EvaluateInRange(float position) const;
 		int GetCycle(float position) const;
 
-		std::vector<CurveKey> m_keys;	// always sorted by Position
+		std::vector<CurveKey> m_keys; // always sorted by Position
 	};
 }

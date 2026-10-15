@@ -24,33 +24,37 @@
 
 extern "C" typedef void(__cdecl* KatanaHostMessageCallback)(const char* message);
 
-#define KATANA_DEFINE_HOST_EXPORTS(GameFactoryFunction)                                                         \
-	namespace                                                                                                   \
-	{                                                                                                           \
-		KatanaEngine::GameHost& KatanaHostInstance()                                                            \
-		{                                                                                                       \
-			static KatanaEngine::GameHost host;                                                                 \
-			return host;                                                                                        \
-		}                                                                                                       \
-	}                                                                                                           \
-                                                                                                                \
-	extern "C" __declspec(dllexport) int __cdecl KatanaHost_Start(void* parentWindow, KatanaHostMessageCallback onMessage) \
-	{                                                                                                           \
-		auto forward = [onMessage](const std::string& message) { if (onMessage) onMessage(message.c_str()); }; \
-		return KatanaHostInstance().Start(parentWindow, GameFactoryFunction, forward) ? 1 : 0;                 \
-	}                                                                                                           \
-                                                                                                                \
-	extern "C" __declspec(dllexport) void __cdecl KatanaHost_Resize(int width, int height)                   \
-	{                                                                                                           \
-		KatanaHostInstance().Resize(width, height);                                                             \
-	}                                                                                                           \
-                                                                                                                \
-	extern "C" __declspec(dllexport) void __cdecl KatanaHost_Post(const char* message)                        \
-	{                                                                                                           \
-		if (message) KatanaHostInstance().Post(message);                                                        \
-	}                                                                                                           \
-                                                                                                                \
-	extern "C" __declspec(dllexport) void __cdecl KatanaHost_Stop()                                           \
-	{                                                                                                           \
-		KatanaHostInstance().Stop();                                                                            \
+#define KATANA_DEFINE_HOST_EXPORTS(GameFactoryFunction)                                                                \
+	namespace                                                                                                          \
+	{                                                                                                                  \
+		KatanaEngine::GameHost& KatanaHostInstance()                                                                   \
+		{                                                                                                              \
+			static KatanaEngine::GameHost host;                                                                        \
+			return host;                                                                                               \
+		}                                                                                                              \
+	}                                                                                                                  \
+                                                                                                                       \
+	extern "C" __declspec(dllexport) int __cdecl KatanaHost_Start(                                                     \
+		void* parentWindow, KatanaHostMessageCallback onMessage)                                                       \
+	{                                                                                                                  \
+		auto forward = [onMessage](const std::string& message)                                                         \
+		{                                                                                                              \
+			if (onMessage) onMessage(message.c_str());                                                                 \
+		};                                                                                                             \
+		return KatanaHostInstance().Start(parentWindow, GameFactoryFunction, forward) ? 1 : 0;                         \
+	}                                                                                                                  \
+                                                                                                                       \
+	extern "C" __declspec(dllexport) void __cdecl KatanaHost_Resize(int width, int height)                             \
+	{                                                                                                                  \
+		KatanaHostInstance().Resize(width, height);                                                                    \
+	}                                                                                                                  \
+                                                                                                                       \
+	extern "C" __declspec(dllexport) void __cdecl KatanaHost_Post(const char* message)                                 \
+	{                                                                                                                  \
+		if (message) KatanaHostInstance().Post(message);                                                               \
+	}                                                                                                                  \
+                                                                                                                       \
+	extern "C" __declspec(dllexport) void __cdecl KatanaHost_Stop()                                                    \
+	{                                                                                                                  \
+		KatanaHostInstance().Stop();                                                                                   \
 	}

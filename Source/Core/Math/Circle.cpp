@@ -1,8 +1,6 @@
 ﻿#include "pch.h"
 #include "Circle.h"
 
-
-
 namespace KatanaEngine
 {
 	Circle& Circle::operator=(const Circle& other)
@@ -15,8 +13,12 @@ namespace KatanaEngine
 		return *this;
 	}
 
-	void Circle::Draw(const ALLEGRO_COLOR fillColor, const ALLEGRO_COLOR strokeColor,
-		const float strokeWidth, const float offsetX, const float offsetY) const
+	void Circle::Draw(
+		const ALLEGRO_COLOR fillColor,
+		const ALLEGRO_COLOR strokeColor,
+		const float strokeWidth,
+		const float offsetX,
+		const float offsetY) const
 	{
 		float radius = Radius < 0 ? 0 : Radius;
 
@@ -26,7 +28,6 @@ namespace KatanaEngine
 		if (fillColor.a > 0) al_draw_filled_circle(x, y, radius, fillColor);
 		if (strokeColor.a <= 0) return;
 		al_draw_circle(x, y, radius, strokeColor, strokeWidth);
-
 	}
 
 	void Circle::Translate(const Vector2& offset)

@@ -33,8 +33,7 @@ namespace KatanaEngine
 	Vector2 Camera::GetSnappedViewOffset() const
 	{
 		return Vector2(
-			static_cast<float>(std::round(m_viewPosition.X)),
-			static_cast<float>(std::round(m_viewPosition.Y)));
+			static_cast<float>(std::round(m_viewPosition.X)), static_cast<float>(std::round(m_viewPosition.Y)));
 	}
 
 	void Camera::ZoomIn()

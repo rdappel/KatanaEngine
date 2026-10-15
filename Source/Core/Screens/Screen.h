@@ -40,7 +40,7 @@ namespace KatanaEngine
 		bool IsInputBlocking() const { return m_isInputBlocking; }
 		void SetInputBlocking(bool blocking) { m_isInputBlocking = blocking; }
 
-        ScreenManager* GetScreenManager() const { return m_pScreenManager.lock().get(); }
+		ScreenManager* GetScreenManager() const { return m_pScreenManager.lock().get(); }
 
 	protected:
 		bool BeginShow();
@@ -49,14 +49,13 @@ namespace KatanaEngine
 		bool IsExiting() const { return m_isExiting; }
 
 	private:
-
 		friend class ScreenManager;
-	
-       void SetScreenManager(std::shared_ptr<ScreenManager> manager) { m_pScreenManager = std::move(manager); }
+
+		void SetScreenManager(std::shared_ptr<ScreenManager> manager) { m_pScreenManager = std::move(manager); }
 		bool ShouldShowOnAdd() const { return m_showOnAdd; }
 		void NotifyRemoved();
 
-      std::weak_ptr<ScreenManager> m_pScreenManager;
+		std::weak_ptr<ScreenManager> m_pScreenManager;
 
 		bool m_isDrawBlocking = true;
 		bool m_isUpdateBlocking = true;

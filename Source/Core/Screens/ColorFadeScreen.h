@@ -30,7 +30,11 @@ namespace KatanaEngine
 		void Show() override;
 		void Exit() override;
 
-		void ShowImmediately() { m_state = FadeState::Visible; m_fadeElapsed = 0.0f; }
+		void ShowImmediately()
+		{
+			m_state = FadeState::Visible;
+			m_fadeElapsed = 0.0f;
+		}
 		void ExitImmediately() { RemoveFromManager(); }
 
 	private:

@@ -7,9 +7,8 @@ namespace KatanaEngine
 	class IPositionable
 	{
 	public:
-		virtual ~IPositionable() { }
+		virtual ~IPositionable() {}
 
 		virtual Vector2 GetPosition() const = 0;
-
 	};
 }

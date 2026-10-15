@@ -36,7 +36,7 @@ namespace KatanaEngine
 	private:
 		void ClampToBounds();
 
-		static constexpr float k_zoomLevels[] = { 0.24f, 0.50f, 1.00f, 1.50f, 2.00f };
+		static constexpr float k_zoomLevels[] = {0.24f, 0.50f, 1.00f, 1.50f, 2.00f};
 		static constexpr int k_defaultZoomIndex = 4; // 200%
 
 		Vector2 m_viewPosition;

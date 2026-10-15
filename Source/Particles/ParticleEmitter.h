@@ -12,10 +12,10 @@ namespace KatanaEngine
 		struct EmitterConfig
 		{
 			int MaxParticles = 100;
-			float EmissionRate = 10.0f;		// Particles per second
+			float EmissionRate = 10.0f; // Particles per second
 			bool IsLooping = true;
-			float Duration = 1.0f;			// For non-looping emitters
-			BlendState Blend = BlendState::ALPHA_BLEND;	// Used by DrawBatch()
+			float Duration = 1.0f;                      // For non-looping emitters
+			BlendState Blend = BlendState::ALPHA_BLEND; // Used by DrawBatch()
 
 			EmitterConfig() = default;
 		};
@@ -23,11 +23,9 @@ namespace KatanaEngine
 		template<typename TParticle>
 		class ParticleEmitter
 		{
-			static_assert(std::is_base_of<Particle, TParticle>::value,
-				"TParticle must derive from Particle");
+			static_assert(std::is_base_of<Particle, TParticle>::value, "TParticle must derive from Particle");
 
 		public:
-			
 			ParticleEmitter(const EmitterConfig& config = EmitterConfig())
 				: m_config(config)
 				, m_position(Vector2::ZERO)
@@ -41,7 +39,11 @@ namespace KatanaEngine
 			void SetPosition(const Vector2& position) { m_position = position; }
 			const Vector2& GetPosition() const { return m_position; }
 
-			void Start() { m_isEmitting = true; m_age = 0.0f; }
+			void Start()
+			{
+				m_isEmitting = true;
+				m_age = 0.0f;
+			}
 			void Stop() { m_isEmitting = false; }
 			bool IsEmitting() const { return m_isEmitting; }
 
@@ -50,24 +52,15 @@ namespace KatanaEngine
 				m_initializers.push_back(initializer);
 			}
 
-			void AddUpdater(std::shared_ptr<IParticleUpdater> updater)
-			{
-				m_updaters.push_back(updater);
-			}
+			void AddUpdater(std::shared_ptr<IParticleUpdater> updater) { m_updaters.push_back(updater); }
 
-			void SetDrawer(std::shared_ptr<IParticleDrawer> drawer)
-			{
-				m_drawer = drawer;
-			}
+			void SetDrawer(std::shared_ptr<IParticleDrawer> drawer) { m_drawer = drawer; }
 
 			void Update(const GameTime& gameTime)
 			{
 				float deltaTime = static_cast<float>(gameTime.ElapsedTime);
 				m_age += deltaTime;
-				if (!m_config.IsLooping && m_age >= m_config.Duration)
-				{
-					m_isEmitting = false;
-				}
+				if (!m_config.IsLooping && m_age >= m_config.Duration) m_isEmitting = false;
 
 				if (m_isEmitting) EmitParticles(deltaTime);
 
@@ -75,10 +68,7 @@ namespace KatanaEngine
 				{
 					if (!particle.IsAlive) continue;
 
-					for (auto& updater : m_updaters)
-					{
-						updater->Update(particle, gameTime);
-					}
+					for (auto& updater : m_updaters) updater->Update(particle, gameTime);
 				}
 			}
 
@@ -110,9 +100,7 @@ namespace KatanaEngine
 			{
 				int count = 0;
 				for (const auto& p : m_particles)
-				{
 					if (p.IsAlive) ++count;
-				}
 				return count;
 			}
 
@@ -121,9 +109,7 @@ namespace KatanaEngine
 			void ForEachActive(TFunction&& fn) const
 			{
 				for (const auto& particle : m_particles)
-				{
 					if (particle.IsAlive) fn(particle);
-				}
 			}
 
 			int GetMaxParticles() const { return m_config.MaxParticles; }
@@ -133,10 +119,7 @@ namespace KatanaEngine
 				for (int i = 0; i < count; ++i)
 				{
 					TParticle* particle = FindDeadParticle();
-					if (particle)
-					{
-						InitializeParticle(*particle);
-					}
+					if (particle) InitializeParticle(*particle);
 				}
 			}
 
@@ -144,14 +127,10 @@ namespace KatanaEngine
 
 			void Clear()
 			{
-				for (auto& particle : m_particles)
-				{
-					particle.IsAlive = false;
-				}
+				for (auto& particle : m_particles) particle.IsAlive = false;
 			}
 
 		private:
-
 			void EmitParticles(float deltaTime)
 			{
 				m_emissionAccumulator += m_config.EmissionRate * deltaTime;
@@ -167,21 +146,16 @@ namespace KatanaEngine
 			TParticle* FindDeadParticle()
 			{
 				for (auto& particle : m_particles)
-				{
 					if (!particle.IsAlive) return &particle;
-				}
 				return nullptr;
 			}
 
 			void InitializeParticle(TParticle& particle)
 			{
-				particle = TParticle();  // Reset to defaults
+				particle = TParticle(); // Reset to defaults
 				particle.IsAlive = true;
 
-				for (auto& initializer : m_initializers)
-				{
-					initializer->Initialize(particle, m_position);
-				}
+				for (auto& initializer : m_initializers) initializer->Initialize(particle, m_position);
 			}
 
 			EmitterConfig m_config;

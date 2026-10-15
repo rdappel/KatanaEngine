@@ -14,16 +14,15 @@ namespace KatanaEngine
 {
 	namespace
 	{
-		const char* const LoopTypeNames[] = { "Constant", "Cycle", "CycleOffset", "Oscillate", "Linear" };
-		const char* const ContinuityNames[] = { "Smooth", "Step" };
+		const char* const LoopTypeNames[] = {"Constant", "Cycle", "CycleOffset", "Oscillate", "Linear"};
+		const char* const ContinuityNames[] = {"Smooth", "Step"};
 
 		bool EqualsIgnoreCase(const std::string& a, const char* b)
 		{
 			size_t i = 0;
 			for (; i < a.size() && b[i] != '\0'; ++i)
-			{
-				if (std::tolower(static_cast<unsigned char>(a[i])) != std::tolower(static_cast<unsigned char>(b[i]))) return false;
-			}
+				if (std::tolower(static_cast<unsigned char>(a[i])) != std::tolower(static_cast<unsigned char>(b[i])))
+					return false;
 			return i == a.size() && b[i] == '\0';
 		}
 
@@ -82,19 +81,30 @@ namespace KatanaEngine
 
 			// Finds the next element with this local name, starting at from. On success,
 			// element is the whole tag and content its inside (empty for <Name/>).
-			bool FindElement(const char* name, size_t from, XmlRange& content, size_t& elementEnd, std::string* openTag = nullptr) const
+			bool FindElement(
+				const char* name,
+				size_t from,
+				XmlRange& content,
+				size_t& elementEnd,
+				std::string* openTag = nullptr) const
 			{
 				const std::string& text = *Text;
 				const size_t nameLength = std::char_traits<char>::length(name);
 
-				for (size_t position = text.find('<', from); position != std::string::npos && position < End; position = text.find('<', position + 1))
+				for (size_t position = text.find('<', from); position != std::string::npos && position < End;
+				     position = text.find('<', position + 1))
 				{
-					if (position + 1 >= End || text[position + 1] == '/' || text[position + 1] == '?' || text[position + 1] == '!') continue;
+					if (position + 1 >= End || text[position + 1] == '/' || text[position + 1] == '?' ||
+					    text[position + 1] == '!')
+						continue;
 
 					// Local name: after an optional "prefix:".
 					size_t nameStart = position + 1;
 					size_t nameEnd = nameStart;
-					while (nameEnd < End && (std::isalnum(static_cast<unsigned char>(text[nameEnd])) || text[nameEnd] == '_' || text[nameEnd] == ':' || text[nameEnd] == '.' || text[nameEnd] == '-')) ++nameEnd;
+					while (nameEnd < End &&
+					       (std::isalnum(static_cast<unsigned char>(text[nameEnd])) || text[nameEnd] == '_' ||
+					        text[nameEnd] == ':' || text[nameEnd] == '.' || text[nameEnd] == '-'))
+						++nameEnd;
 					const size_t colon = text.rfind(':', nameEnd - 1);
 					if (colon != std::string::npos && colon >= nameStart && colon < nameEnd) nameStart = colon + 1;
 					if (nameEnd - nameStart != nameLength || text.compare(nameStart, nameLength, name) != 0) continue;
@@ -103,9 +113,9 @@ namespace KatanaEngine
 					if (tagEnd == std::string::npos || tagEnd >= End) return false;
 					if (openTag) *openTag = text.substr(position, tagEnd - position + 1);
 
-					if (text[tagEnd - 1] == '/')	// <Name/>
+					if (text[tagEnd - 1] == '/') // <Name/>
 					{
-						content = { Text, tagEnd, tagEnd };
+						content = {Text, tagEnd, tagEnd};
 						elementEnd = tagEnd + 1;
 						return true;
 					}
@@ -116,7 +126,7 @@ namespace KatanaEngine
 					const size_t close = text.find("</" + qualifiedName, tagEnd + 1);
 					if (close == std::string::npos || close >= End) return false;
 
-					content = { Text, tagEnd + 1, close };
+					content = {Text, tagEnd + 1, close};
 					elementEnd = text.find('>', close) + 1;
 					return true;
 				}
@@ -142,8 +152,10 @@ namespace KatanaEngine
 			for (size_t position = 0; position < xml.size();)
 			{
 				const char* close = nullptr;
-				if (xml.compare(position, 4, "<!--") == 0) close = "-->";
-				else if (xml.compare(position, 2, "<?") == 0) close = "?>";
+				if (xml.compare(position, 4, "<!--") == 0)
+					close = "-->";
+				else if (xml.compare(position, 2, "<?") == 0)
+					close = "?>";
 
 				if (!close)
 				{
@@ -162,7 +174,8 @@ namespace KatanaEngine
 		{
 			XmlRange keyContent;
 			size_t elementEnd = 0;
-			for (size_t from = keys.Begin; keys.FindElement("CurveKey", from, keyContent, elementEnd); from = elementEnd)
+			for (size_t from = keys.Begin; keys.FindElement("CurveKey", from, keyContent, elementEnd);
+			     from = elementEnd)
 			{
 				CurveKey key;
 				std::string text;
@@ -188,9 +201,10 @@ namespace KatanaEngine
 			for (size_t i = 0; i < tokens.size(); i += 5)
 			{
 				CurveKey key;
-				if (!ParseFloat(tokens[i], key.Position) || !ParseFloat(tokens[i + 1], key.Value)
-					|| !ParseFloat(tokens[i + 2], key.TangentIn) || !ParseFloat(tokens[i + 3], key.TangentOut)
-					|| !ParseContinuity(tokens[i + 4], key.Continuity)) return false;
+				if (!ParseFloat(tokens[i], key.Position) || !ParseFloat(tokens[i + 1], key.Value) ||
+				    !ParseFloat(tokens[i + 2], key.TangentIn) || !ParseFloat(tokens[i + 3], key.TangentOut) ||
+				    !ParseContinuity(tokens[i + 4], key.Continuity))
+					return false;
 				result.push_back(key);
 			}
 			return true;
@@ -200,10 +214,8 @@ namespace KatanaEngine
 		{
 			const float t2 = t * t;
 			const float t3 = t2 * t;
-			return (2.0f * t3 - 3.0f * t2 + 1.0f) * value0
-				+ (t3 - 2.0f * t2 + t) * tangent0
-				+ (3.0f * t2 - 2.0f * t3) * value1
-				+ (t3 - t2) * tangent1;
+			return (2.0f * t3 - 3.0f * t2 + 1.0f) * value0 + (t3 - 2.0f * t2 + t) * tangent0 +
+			       (3.0f * t2 - 2.0f * t3) * value1 + (t3 - t2) * tangent1;
 		}
 	}
 
@@ -225,15 +237,15 @@ namespace KatanaEngine
 
 		if (loop == CurveLoopType::LINEAR)
 		{
-			return isBefore
-				? first.Value - first.TangentIn * (first.Position - position)
-				: last.Value + last.TangentOut * (position - last.Position);
+			return isBefore ? first.Value - first.TangentIn * (first.Position - position)
+			                : last.Value + last.TangentOut * (position - last.Position);
 		}
 
 		const int cycle = GetCycle(position);
 		const float offset = static_cast<float>(cycle) * range;
 		if (loop == CurveLoopType::CYCLE) return EvaluateInRange(position - offset);
-		if (loop == CurveLoopType::CYCLE_OFFSET) return EvaluateInRange(position - offset) + static_cast<float>(cycle) * (last.Value - first.Value);
+		if (loop == CurveLoopType::CYCLE_OFFSET)
+			return EvaluateInRange(position - offset) + static_cast<float>(cycle) * (last.Value - first.Value);
 
 		// OSCILLATE: even cycles run forwards, odd cycles backwards.
 		const bool isForwards = cycle % 2 == 0;
@@ -252,9 +264,13 @@ namespace KatanaEngine
 	float Curve::EvaluateInRange(float position) const
 	{
 		// The segment [previous, next] holding position.
-		const auto upper = std::upper_bound(m_keys.begin(), m_keys.end(), position,
+		const auto upper = std::upper_bound(
+			m_keys.begin(),
+			m_keys.end(),
+			position,
 			[](float value, const CurveKey& key) { return value < key.Position; });
-		const size_t nextIndex = std::clamp(static_cast<size_t>(upper - m_keys.begin()), static_cast<size_t>(1), m_keys.size() - 1);
+		const size_t nextIndex =
+			std::clamp(static_cast<size_t>(upper - m_keys.begin()), static_cast<size_t>(1), m_keys.size() - 1);
 
 		const CurveKey& previous = m_keys[nextIndex - 1];
 		const CurveKey& next = m_keys[nextIndex];
@@ -267,7 +283,10 @@ namespace KatanaEngine
 
 	int Curve::AddKey(const CurveKey& key)
 	{
-		const auto position = std::upper_bound(m_keys.begin(), m_keys.end(), key.Position,
+		const auto position = std::upper_bound(
+			m_keys.begin(),
+			m_keys.end(),
+			key.Position,
 			[](float value, const CurveKey& existing) { return value < existing.Position; });
 		return static_cast<int>(m_keys.insert(position, key) - m_keys.begin());
 	}
@@ -304,16 +323,28 @@ namespace KatanaEngine
 
 		switch (tangentIn)
 		{
-			case CurveTangent::FLAT: key.TangentIn = 0.0f; break;
-			case CurveTangent::LINEAR: key.TangentIn = key.Value - previous.Value; break;
-			case CurveTangent::SMOOTH: key.TangentIn = hasSpan ? change * ((key.Position - previous.Position) / span) : 0.0f; break;
+		case CurveTangent::FLAT:
+			key.TangentIn = 0.0f;
+			break;
+		case CurveTangent::LINEAR:
+			key.TangentIn = key.Value - previous.Value;
+			break;
+		case CurveTangent::SMOOTH:
+			key.TangentIn = hasSpan ? change * ((key.Position - previous.Position) / span) : 0.0f;
+			break;
 		}
 
 		switch (tangentOut)
 		{
-			case CurveTangent::FLAT: key.TangentOut = 0.0f; break;
-			case CurveTangent::LINEAR: key.TangentOut = next.Value - key.Value; break;
-			case CurveTangent::SMOOTH: key.TangentOut = hasSpan ? change * ((next.Position - key.Position) / span) : 0.0f; break;
+		case CurveTangent::FLAT:
+			key.TangentOut = 0.0f;
+			break;
+		case CurveTangent::LINEAR:
+			key.TangentOut = next.Value - key.Value;
+			break;
+		case CurveTangent::SMOOTH:
+			key.TangentOut = hasSpan ? change * ((next.Position - key.Position) / span) : 0.0f;
+			break;
 		}
 	}
 
@@ -335,7 +366,7 @@ namespace KatanaEngine
 	bool Curve::LoadFromString(const std::string& xml)
 	{
 		const std::string text = StripMarkup(xml);
-		const XmlRange document{ &text, 0, text.size() };
+		const XmlRange document{&text, 0, text.size()};
 
 		// <Asset Type="...Curve"> (any namespace prefix on the type).
 		XmlRange asset;
@@ -370,12 +401,14 @@ namespace KatanaEngine
 		if (asset.FindElement("Keys", asset.Begin, keysContent, elementEnd))
 		{
 			const bool isExpanded = text.find('<', keysContent.Begin) < keysContent.End;
-			const bool parsed = isExpanded ? ParseExpandedKeys(keysContent, keys) : ParseCompactKeys(keysContent.GetText(), keys);
+			const bool parsed =
+				isExpanded ? ParseExpandedKeys(keysContent, keys) : ParseCompactKeys(keysContent.GetText(), keys);
 			if (!parsed) return false;
 		}
 
 		// Files are written in order, but sort anyway so the curve's invariant holds.
-		std::stable_sort(keys.begin(), keys.end(), [](const CurveKey& a, const CurveKey& b) { return a.Position < b.Position; });
+		std::stable_sort(
+			keys.begin(), keys.end(), [](const CurveKey& a, const CurveKey& b) { return a.Position < b.Position; });
 
 		PreLoop = preLoop;
 		PostLoop = postLoop;

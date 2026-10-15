@@ -12,10 +12,9 @@ namespace KatanaEngine
 {
 	class Game;
 
- class ScreenManager : public std::enable_shared_from_this<ScreenManager>
+	class ScreenManager : public std::enable_shared_from_this<ScreenManager>
 	{
 	public:
-
 		ScreenManager(Game* pGame);
 
 		~ScreenManager() = default;

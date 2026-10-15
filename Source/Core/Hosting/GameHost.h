@@ -50,15 +50,21 @@ namespace KatanaEngine
 		bool IsRunning() const { return m_state.load() == State::Running; }
 
 	private:
-		enum class State { Stopped, Starting, Running, Failed };
+		enum class State
+		{
+			Stopped,
+			Starting,
+			Running,
+			Failed
+		};
 
 		void RunGameThread(void* parentWindow, GameFactory factory, MessageCallback onMessage);
 
 		std::thread m_thread;
-		std::atomic<State> m_state{ State::Stopped };
-		std::atomic<bool> m_threadFinished{ true };
+		std::atomic<State> m_state{State::Stopped};
+		std::atomic<bool> m_threadFinished{true};
 
 		std::mutex m_gameMutex;
-		Game* m_pGame = nullptr;  // owned by the game thread; guarded by m_gameMutex
+		Game* m_pGame = nullptr; // owned by the game thread; guarded by m_gameMutex
 	};
 }

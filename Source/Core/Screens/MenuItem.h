@@ -43,6 +43,5 @@ namespace KatanaEngine
 		bool m_isFocused = false;
 		bool m_isEnabled = true;
 		bool m_isMouseHover = false;
-
 	};
 }

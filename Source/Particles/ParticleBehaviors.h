@@ -9,8 +9,7 @@ namespace KatanaEngine
 		template<typename TParticle>
 		class ParticleInitializer : public IParticleInitializer
 		{
-			static_assert(std::is_base_of<Particle, TParticle>::value,
-				"TParticle must derive from Particle");
+			static_assert(std::is_base_of<Particle, TParticle>::value, "TParticle must derive from Particle");
 
 		public:
 			void Initialize(Particle& particle, const Vector2& emitterPosition) final
@@ -25,8 +24,7 @@ namespace KatanaEngine
 		template<typename TParticle>
 		class ParticleUpdater : public IParticleUpdater
 		{
-			static_assert(std::is_base_of<Particle, TParticle>::value,
-				"TParticle must derive from Particle");
+			static_assert(std::is_base_of<Particle, TParticle>::value, "TParticle must derive from Particle");
 
 		public:
 			void Update(Particle& particle, const GameTime& gameTime) final
@@ -41,8 +39,7 @@ namespace KatanaEngine
 		template<typename TParticle>
 		class ParticleDrawer : public IParticleDrawer
 		{
-			static_assert(std::is_base_of<Particle, TParticle>::value,
-				"TParticle must derive from Particle");
+			static_assert(std::is_base_of<Particle, TParticle>::value, "TParticle must derive from Particle");
 
 		public:
 			void Draw(const Particle& particle, SpriteBatch& spriteBatch) final

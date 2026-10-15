@@ -14,7 +14,8 @@ namespace KatanaEngine
 	ColorFadeScreen::ColorFadeScreen(const Color& color, bool show)
 		: Screen(show)
 		, m_color(color)
-	{ }
+	{
+	}
 
 	void ColorFadeScreen::SetFadeInTime(float seconds)
 	{
@@ -51,16 +52,14 @@ namespace KatanaEngine
 		m_fadeEffect = resourceManager.Load<Effect>("Effects/ColorFade.keeffect");
 		if (!m_fadeEffect)
 		{
-			std::cerr << "WARNING: ColorFadeScreen running without shader effect (not supported or failed to load)" << std::endl;
+			std::cerr << "WARNING: ColorFadeScreen running without shader effect (not supported or failed to load)"
+					  << std::endl;
 		}
 	}
 
 	void ColorFadeScreen::Update(const GameTime& gameTime)
 	{
-		if (m_state != FadeState::FadingIn && m_state != FadeState::FadingOut)
-		{
-			return;
-		}
+		if (m_state != FadeState::FadingIn && m_state != FadeState::FadingOut) return;
 
 		m_fadeElapsed += static_cast<float>(gameTime.ElapsedTime);
 
@@ -72,28 +71,19 @@ namespace KatanaEngine
 		}
 
 		if (m_state == FadeState::FadingOut && GetFadeProgress(m_fadeElapsed, m_fadeOutTime) >= 1.0f)
-		{
 			RemoveFromManager();
-		}
 	}
 
 	void ColorFadeScreen::Draw(SpriteBatch& spriteBatch)
 	{
-		if (!GetScreenManager())
-		{
-			return;
-		}
+		if (!GetScreenManager()) return;
 
 		const float overlayAmount = GetOverlayAmount();
-		if (overlayAmount <= 0.0f)
-		{
-			return;
-		}
+		if (overlayAmount <= 0.0f) return;
 
 		const Game& game = GetScreenManager()->GetGame();
-		Rectangle screenRect(0.0f, 0.0f,
-			static_cast<float>(game.GetScreenWidth()),
-			static_cast<float>(game.GetScreenHeight()));
+		Rectangle screenRect(
+			0.0f, 0.0f, static_cast<float>(game.GetScreenWidth()), static_cast<float>(game.GetScreenHeight()));
 
 		if (m_fadeEffect && m_fadeEffect->IsValid())
 		{
@@ -115,47 +105,29 @@ namespace KatanaEngine
 
 	void ColorFadeScreen::Show()
 	{
-		if (!BeginShow())
-		{
-			return;
-		}
+		if (!BeginShow()) return;
 
 		m_state = FadeState::FadingIn;
 		m_fadeElapsed = 0.0f;
 
-		if (m_fadeInTime <= 0.0f)
-		{
-			m_state = FadeState::Visible;
-		}
+		if (m_fadeInTime <= 0.0f) m_state = FadeState::Visible;
 	}
 
 	void ColorFadeScreen::Exit()
 	{
-		if (IsFadingOut())
-		{
-			return;
-		}
+		if (IsFadingOut()) return;
 
-		if (!BeginExit())
-		{
-			return;
-		}
+		if (!BeginExit()) return;
 
 		m_state = FadeState::FadingOut;
 		m_fadeElapsed = 0.0f;
 
-		if (m_fadeOutTime <= 0.0f)
-		{
-			RemoveFromManager();
-		}
+		if (m_fadeOutTime <= 0.0f) RemoveFromManager();
 	}
 
 	float ColorFadeScreen::GetFadeProgress(float elapsed, float duration) const
 	{
-		if (duration <= 0.0f)
-		{
-			return 1.0f;
-		}
+		if (duration <= 0.0f) return 1.0f;
 
 		return Math::Clamp(elapsed / duration, 0.0f, 1.0f);
 	}

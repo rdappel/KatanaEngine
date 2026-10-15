@@ -23,8 +23,7 @@ namespace KatanaEngine
 
 		void Panel::HandleInput(const InputState& input)
 		{
-			if (!IsEnabled() || !IsVisible())
-				return;
+			if (!IsEnabled() || !IsVisible()) return;
 
 			Vector2 mousePos = input.GetMousePosition();
 			m_isHovered = ContainsPoint(mousePos);
@@ -58,7 +57,7 @@ namespace KatanaEngine
 					for (auto* control : m_controls)
 					{
 						if (!control) continue;
-						
+
 						Vector2 childPos = control->GetPosition();
 						control->SetPosition(childPos + offset);
 					}
@@ -69,17 +68,13 @@ namespace KatanaEngine
 
 			// Pass input to all child controls
 			for (auto* control : m_controls)
-			{
 				if (control) control->HandleInput(input);
-			}
 		}
 
 		void Panel::Update(const GameTime& gameTime)
 		{
 			for (auto* control : m_controls)
-			{
 				if (control) control->Update(gameTime);
-			}
 		}
 
 		void Panel::Draw(SpriteBatch& spriteBatch)
@@ -124,10 +119,7 @@ namespace KatanaEngine
 			if (!control) return;
 
 			auto it = std::find(m_controls.begin(), m_controls.end(), control);
-			if (it != m_controls.end())
-			{
-				m_controls.erase(it);
-			}
+			if (it != m_controls.end()) m_controls.erase(it);
 		}
 
 		void Panel::ClearControls()
@@ -143,12 +135,7 @@ namespace KatanaEngine
 			float contentY = position.Y + (m_title.empty() ? m_padding : m_titleBarHeight + m_padding);
 			float contentHeight = size.Y - (m_title.empty() ? m_padding * 2 : m_titleBarHeight + m_padding * 2);
 
-			return Region(
-				position.X + m_padding,
-				contentY,
-				size.X - m_padding * 2,
-				contentHeight
-			);
+			return Region(position.X + m_padding, contentY, size.X - m_padding * 2, contentHeight);
 		}
 
 		bool Panel::IsTitleBarHit(const Vector2& point) const
@@ -156,8 +143,8 @@ namespace KatanaEngine
 			if (m_title.empty()) return false;
 
 			Region titleBar = GetTitleBarBounds();
-			return point.X >= titleBar.X && point.X <= titleBar.X + titleBar.Width &&
-				point.Y >= titleBar.Y && point.Y <= titleBar.Y + titleBar.Height;
+			return point.X >= titleBar.X && point.X <= titleBar.X + titleBar.Width && point.Y >= titleBar.Y &&
+			       point.Y <= titleBar.Y + titleBar.Height;
 		}
 
 		Region Panel::GetTitleBarBounds() const
@@ -171,8 +158,8 @@ namespace KatanaEngine
 		{
 			Vector2 position = GetPosition();
 			Vector2 size = GetSize();
-			return point.X >= position.X && point.X <= position.X + size.X &&
-				point.Y >= position.Y && point.Y <= position.Y + size.Y;
+			return point.X >= position.X && point.X <= position.X + size.X && point.Y >= position.Y &&
+			       point.Y <= position.Y + size.Y;
 		}
 	}
 }

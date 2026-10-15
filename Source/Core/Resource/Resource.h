@@ -2,12 +2,12 @@
 
 namespace KatanaEngine
 {
-    class Resource
-    {
-    public:
-        virtual ~Resource() = default;
+	class Resource
+	{
+	public:
+		virtual ~Resource() = default;
 
-    protected:
-        Resource() = default;
-    };
+	protected:
+		Resource() = default;
+	};
 }

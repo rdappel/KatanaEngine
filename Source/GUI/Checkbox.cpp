@@ -29,18 +29,13 @@ namespace KatanaEngine
 			bool isMousePressed = input.IsMouseButtonDown(MouseButton::LEFT);
 
 			if (m_isHovered && input.IsMouseButtonReleased(MouseButton::LEFT) && m_wasMousePressed)
-			{
 				SetChecked(!m_isChecked);
-			}
 
 			m_wasMousePressed = m_isHovered && isMousePressed;
 
 			if (IsFocused())
 			{
-				if (input.IsKeyReleased(Keys::ENTER) || input.IsKeyReleased(Keys::SPACE))
-				{
-					SetChecked(!m_isChecked);
-				}
+				if (input.IsKeyReleased(Keys::ENTER) || input.IsKeyReleased(Keys::SPACE)) SetChecked(!m_isChecked);
 			}
 		}
 
@@ -53,8 +48,9 @@ namespace KatanaEngine
 			Color checkColor = IsEnabled() ? m_checkColor : m_disabledColor;
 			Color labelColor = IsEnabled() ? m_labelColor : m_disabledColor;
 
-			Color borderColor = !IsEnabled() ? m_disabledColor :
-				(m_isHovered ? m_hoverColor : (IsFocused() ? m_focusedBorderColor : m_boxColor));
+			Color borderColor = !IsEnabled()
+			                        ? m_disabledColor
+			                        : (m_isHovered ? m_hoverColor : (IsFocused() ? m_focusedBorderColor : m_boxColor));
 
 			Rectangle boxRect(boxBounds.X, boxBounds.Y, boxBounds.Width, boxBounds.Height, 2.0f);
 			spriteBatch.DrawPrimitive(boxRect, Color::TRANSPARENT, borderColor, 2.0f);
@@ -81,8 +77,7 @@ namespace KatanaEngine
 				float lineHeight = 14.0f; // Works well for most fonts at typical sizes
 				Vector2 labelPos(
 					boxBounds.X + boxBounds.Width + m_labelSpacing,
-					boxBounds.Y + (boxBounds.Height - lineHeight) / 2.0f + m_labelOffsetY - 3.0f
-				);
+					boxBounds.Y + (boxBounds.Height - lineHeight) / 2.0f + m_labelOffsetY - 3.0f);
 				spriteBatch.DrawString(GetFont(), m_label, labelPos, labelColor);
 			}
 		}
@@ -98,17 +93,14 @@ namespace KatanaEngine
 
 		void Checkbox::OnChanged()
 		{
-			if (m_onChanged)
-			{
-				m_onChanged(this);
-			}
+			if (m_onChanged) m_onChanged(this);
 		}
 
 		bool Checkbox::ContainsPoint(const Vector2& point) const
 		{
 			Region bounds = GetBounds();
-			return point.X >= bounds.X && point.X <= bounds.X + bounds.Width &&
-				point.Y >= bounds.Y && point.Y <= bounds.Y + bounds.Height;
+			return point.X >= bounds.X && point.X <= bounds.X + bounds.Width && point.Y >= bounds.Y &&
+			       point.Y <= bounds.Y + bounds.Height;
 		}
 
 		Region Checkbox::GetBoxBounds() const

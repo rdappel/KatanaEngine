@@ -7,6 +7,6 @@ namespace KatanaEngine
 	class ICameraTarget : public IPositionable
 	{
 	public:
-		virtual ~ICameraTarget() { }
+		virtual ~ICameraTarget() {}
 	};
 }

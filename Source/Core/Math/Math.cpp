@@ -22,8 +22,7 @@ namespace KatanaEngine
 		return value;
 	}
 
-	float Math::Lerp(const float start, const float end,
-		const float value, const bool clamp)
+	float Math::Lerp(const float start, const float end, const float value, const bool clamp)
 	{
 		return start + (end - start) * (clamp ? Clamp(value) : value);
 	}
@@ -33,8 +32,12 @@ namespace KatanaEngine
 		return min + (rand() % (max - min));
 	}
 
-	float Math::MapRange(const float outputStart, const float outputEnd, const float inputValue,
-		const float inputStart, const float inputEnd)
+	float Math::MapRange(
+		const float outputStart,
+		const float outputEnd,
+		const float inputValue,
+		const float inputStart,
+		const float inputEnd)
 	{
 		float inputRange = inputEnd - inputStart;
 		float outputRange = outputEnd - outputStart;

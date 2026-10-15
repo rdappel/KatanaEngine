@@ -29,15 +29,22 @@ namespace KatanaEngine
 		return *this;
 	}
 
-	void Spline::Draw(const ALLEGRO_COLOR fillColor, const ALLEGRO_COLOR strokeColor,
-		const float strokeWidth, const float offsetX, const float offsetY) const
+	void Spline::Draw(
+		const ALLEGRO_COLOR fillColor,
+		const ALLEGRO_COLOR strokeColor,
+		const float strokeWidth,
+		const float offsetX,
+		const float offsetY) const
 	{
 		float points[8] = {
-			Start.X + offsetX, Start.Y + offsetY,
-			StartControl.X + offsetX, StartControl.Y + offsetY,
-			EndControl.X + offsetX, EndControl.Y + offsetY,
-			End.X + offsetX, End.Y + offsetY
-		};
+			Start.X + offsetX,
+			Start.Y + offsetY,
+			StartControl.X + offsetX,
+			StartControl.Y + offsetY,
+			EndControl.X + offsetX,
+			EndControl.Y + offsetY,
+			End.X + offsetX,
+			End.Y + offsetY};
 
 		al_draw_spline(points, strokeColor, strokeWidth);
 	}

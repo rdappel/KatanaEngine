@@ -35,8 +35,17 @@ namespace KatanaEngine
 				if (!m_texture || particle.Scale <= 0.0f || particle.Color.Alpha <= 0.0f) return;
 
 				const float scale = particle.Scale * m_pixelsToScale;
-				spriteBatch.Draw(m_texture, particle.Position, nullptr, particle.Color, particle.Rotation,
-					m_origin, Vector2(scale, scale), SpriteEffects::NONE, 0.0f, false);
+				spriteBatch.Draw(
+					m_texture,
+					particle.Position,
+					nullptr,
+					particle.Color,
+					particle.Rotation,
+					m_origin,
+					Vector2(scale, scale),
+					SpriteEffects::NONE,
+					0.0f,
+					false);
 			}
 
 		private:
@@ -53,7 +62,8 @@ namespace KatanaEngine
 			{
 				if (particle.Scale <= 0.0f || particle.Color.Alpha <= 0.0f) return;
 
-				spriteBatch.DrawPrimitive(Circle(particle.Position, particle.Scale * 0.5f), particle.Color, particle.Color, 0.0f);
+				spriteBatch.DrawPrimitive(
+					Circle(particle.Position, particle.Scale * 0.5f), particle.Color, particle.Color, 0.0f);
 			}
 		};
 	}

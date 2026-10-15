@@ -16,7 +16,7 @@ namespace KatanaEngine
 			virtual ~Checkbox() = default;
 
 			void HandleInput(const InputState& input) override;
-			void Update(const GameTime& gameTime) override { };
+			void Update(const GameTime& gameTime) override {};
 			void Draw(SpriteBatch& spriteBatch) override;
 
 			bool IsChecked() const { return m_isChecked; }

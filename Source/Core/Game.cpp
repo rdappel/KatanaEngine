@@ -39,7 +39,7 @@ namespace KatanaEngine
 		EngineServices::Configure(m_screenManager);
 		m_screenWidth = m_config.ScreenWidth;
 		m_screenHeight = m_config.ScreenHeight;
-		m_resourceManager.SetGame(this);  // Connect ResourceManager to Game for backend detection
+		m_resourceManager.SetGame(this); // Connect ResourceManager to Game for backend detection
 	}
 
 	Game::~Game()
@@ -76,10 +76,7 @@ namespace KatanaEngine
 
 	bool Game::SetMouseCursor(MouseCursor cursor)
 	{
-		if (!m_pContext || !m_pContext->pDisplay)
-		{
-			return false;
-		}
+		if (!m_pContext || !m_pContext->pDisplay) return false;
 
 		return al_set_system_mouse_cursor(m_pContext->pDisplay.get(), ToAllegroMouseCursor(cursor));
 	}
@@ -91,10 +88,7 @@ namespace KatanaEngine
 
 	void Game::UpdateScreenSizeFromDisplay()
 	{
-		if (!m_pContext || !m_pContext->pDisplay)
-		{
-			return;
-		}
+		if (!m_pContext || !m_pContext->pDisplay) return;
 
 		m_screenWidth = al_get_display_width(m_pContext->pDisplay.get());
 		m_screenHeight = al_get_display_height(m_pContext->pDisplay.get());
@@ -104,9 +98,7 @@ namespace KatanaEngine
 	{
 		// Hosted games live in a DLL: an atexit handler would run al_uninstall_system under the
 		// loader lock at process exit and deadlock. GameHost uninstalls Allegro explicitly instead.
-		const bool installed = m_config.ParentWindow
-			? al_install_system(ALLEGRO_VERSION_INT, nullptr)
-			: al_init();
+		const bool installed = m_config.ParentWindow ? al_install_system(ALLEGRO_VERSION_INT, nullptr) : al_init();
 
 		if (!installed)
 		{
@@ -147,11 +139,9 @@ namespace KatanaEngine
 
 		const bool isHosted = m_config.ParentWindow != nullptr;
 
-		const int baseDisplayFlags = isHosted
-			? (ALLEGRO_WINDOWED | ALLEGRO_FRAMELESS)
-			: m_config.Fullscreen
-				? ALLEGRO_FULLSCREEN_WINDOW
-				: (ALLEGRO_WINDOWED | ALLEGRO_RESIZABLE);
+		const int baseDisplayFlags = isHosted              ? (ALLEGRO_WINDOWED | ALLEGRO_FRAMELESS)
+		                             : m_config.Fullscreen ? ALLEGRO_FULLSCREEN_WINDOW
+		                                                   : (ALLEGRO_WINDOWED | ALLEGRO_RESIZABLE);
 
 		if (isHosted)
 		{
@@ -271,7 +261,7 @@ namespace KatanaEngine
 
 		if (isHosted)
 		{
-			al_set_new_window_position(INT_MAX, INT_MAX);  // restore default placement for later displays
+			al_set_new_window_position(INT_MAX, INT_MAX); // restore default placement for later displays
 
 			if (!Platform::EmbedDisplay(m_pContext->pDisplay.get(), m_config.ParentWindow))
 			{
@@ -297,7 +287,8 @@ namespace KatanaEngine
 			return false;
 		}
 
-		al_register_event_source(m_pContext->pEventQueue.get(), al_get_display_event_source(m_pContext->pDisplay.get()));
+		al_register_event_source(
+			m_pContext->pEventQueue.get(), al_get_display_event_source(m_pContext->pDisplay.get()));
 		al_register_event_source(m_pContext->pEventQueue.get(), al_get_timer_event_source(m_pContext->pTimer.get()));
 		al_register_event_source(m_pContext->pEventQueue.get(), al_get_keyboard_event_source());
 		al_register_event_source(m_pContext->pEventQueue.get(), al_get_mouse_event_source());
@@ -464,10 +455,7 @@ namespace KatanaEngine
 			UpdateScreenSizeFromDisplay();
 		}
 
-		for (const auto& message : m_processingHostMessages)
-		{
-			OnHostMessage(message);
-		}
+		for (const auto& message : m_processingHostMessages) OnHostMessage(message);
 		m_processingHostMessages.clear();
 	}
 }

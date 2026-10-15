@@ -16,14 +16,17 @@ namespace KatanaEngine
 			Spline
 		};
 
-		virtual ~IPrimitive() { }
+		virtual ~IPrimitive() {}
 
 		virtual Type GetType() const = 0;
 
 		virtual void Translate(const Vector2& offset) = 0;
 
-		virtual void Draw(const ALLEGRO_COLOR fillColor, const ALLEGRO_COLOR strokeColor,
-			const float strokeWidth, const float offsetX, const float offsetY) const = 0;
-
+		virtual void Draw(
+			const ALLEGRO_COLOR fillColor,
+			const ALLEGRO_COLOR strokeColor,
+			const float strokeWidth,
+			const float offsetX,
+			const float offsetY) const = 0;
 	};
 }

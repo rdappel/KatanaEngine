@@ -13,7 +13,8 @@ namespace KatanaEngine
 			, m_backgroundColor(Color(0.2f, 0.2f, 0.2f))
 			, m_foregroundColor(Color::WHITE)
 			, m_borderColor(Color(0.5f, 0.5f, 0.5f))
-		{ }
+		{
+		}
 
 		Region Control::GetBounds() const
 		{

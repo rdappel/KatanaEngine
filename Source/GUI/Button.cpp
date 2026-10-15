@@ -15,9 +15,13 @@ namespace KatanaEngine
 			, m_pressedColor(Color(0.1f, 0.1f, 0.1f))
 			, m_disabledColor(Color(0.15f, 0.15f, 0.15f))
 			, m_focusedBorderColor(Color::YELLOW)
-		{ }
+		{
+		}
 
-		Button::Button() : Button("") { }
+		Button::Button()
+			: Button("")
+		{
+		}
 
 		void Button::HandleInput(const InputState& input)
 		{
@@ -38,10 +42,7 @@ namespace KatanaEngine
 
 			if (m_wasMousePressed && input.IsMouseButtonReleased(MouseButton::LEFT))
 			{
-				if (m_isPressed && m_isHovered)
-				{
-					OnClick();
-				}
+				if (m_isPressed && m_isHovered) OnClick();
 				m_isPressed = false;
 				m_wasMousePressed = false;
 			}
@@ -49,10 +50,7 @@ namespace KatanaEngine
 			// Keyboard input (only when focused)
 			if (m_isFocused)
 			{
-				if (input.IsKeyPressed(Keys::ENTER) || input.IsKeyPressed(Keys::SPACE))
-				{
-					m_isPressed = true;
-				}
+				if (input.IsKeyPressed(Keys::ENTER) || input.IsKeyPressed(Keys::SPACE)) m_isPressed = true;
 
 				if (input.IsKeyReleased(Keys::ENTER) || input.IsKeyReleased(Keys::SPACE))
 				{
@@ -67,16 +65,12 @@ namespace KatanaEngine
 
 		void Button::Update(const GameTime& gameTime)
 		{
-			if (!m_isFocused && !m_wasMousePressed)
-			{
-				m_isPressed = false;
-			}
+			if (!m_isFocused && !m_wasMousePressed) m_isPressed = false;
 		}
 
 		void Button::Draw(SpriteBatch& spriteBatch)
 		{
-			if (!m_isVisible)
-				return;
+			if (!m_isVisible) return;
 
 			// Determine colors based on state
 			Color bgColor = m_backgroundColor;
@@ -99,10 +93,7 @@ namespace KatanaEngine
 				textColor = Color::WHITE;
 			}
 
-			if (m_isFocused || m_isHovered)
-			{
-				borderColor = m_isHovered ? Color::WHITE : m_focusedBorderColor;
-			}
+			if (m_isFocused || m_isHovered) borderColor = m_isHovered ? Color::WHITE : m_focusedBorderColor;
 
 			// Draw button background
 			Rectangle rect(m_position.X, m_position.Y, m_size.X, m_size.Y, 4.0f);
@@ -113,11 +104,9 @@ namespace KatanaEngine
 			{
 				float textWidth = static_cast<float>(m_font->MeasureString(m_text));
 				float lineHeight = static_cast<float>(m_font->GetLineHeight());
-				
+
 				Vector2 textPos(
-					m_position.X + (m_size.X - textWidth) / 2.0f,
-					m_position.Y + (m_size.Y - lineHeight) / 2.0f
-				);
+					m_position.X + (m_size.X - textWidth) / 2.0f, m_position.Y + (m_size.Y - lineHeight) / 2.0f);
 				spriteBatch.DrawString(m_font, m_text, textPos, textColor);
 			}
 		}
@@ -130,8 +119,8 @@ namespace KatanaEngine
 
 		bool Button::ContainsPoint(const Vector2& point) const
 		{
-			return point.X >= m_position.X && point.X < m_position.X + m_size.X &&
-				point.Y >= m_position.Y && point.Y < m_position.Y + m_size.Y;
+			return point.X >= m_position.X && point.X < m_position.X + m_size.X && point.Y >= m_position.Y &&
+			       point.Y < m_position.Y + m_size.Y;
 		}
 	}
 }

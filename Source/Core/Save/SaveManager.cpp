@@ -20,10 +20,7 @@ namespace KatanaEngine
 
 	void SaveManager::Unregister(ISaveable* saveable)
 	{
-		m_saveables.erase(
-			std::remove(m_saveables.begin(), m_saveables.end(), saveable),
-			m_saveables.end()
-		);
+		m_saveables.erase(std::remove(m_saveables.begin(), m_saveables.end(), saveable), m_saveables.end());
 	}
 
 	SaveData SaveManager::CreateSave() const
@@ -31,9 +28,7 @@ namespace KatanaEngine
 		SaveData data;
 
 		for (auto* saveable : m_saveables)
-		{
 			if (saveable) saveable->Save(data);
-		}
 
 		return data;
 	}
@@ -41,9 +36,7 @@ namespace KatanaEngine
 	void SaveManager::LoadSave(const SaveData& data)
 	{
 		for (auto* saveable : m_saveables)
-		{
 			if (saveable) saveable->Load(data);
-		}
 	}
 
 	bool SaveManager::SaveToFile(const std::string& path) const
@@ -52,8 +45,7 @@ namespace KatanaEngine
 		if (!file.is_open()) return false;
 
 		const SaveData data = CreateSave();
-		for (const auto& [key, value] : data.GetValues())
-			file << key << "=" << value << "\n";
+		for (const auto& [key, value] : data.GetValues()) file << key << "=" << value << "\n";
 
 		std::cout << "[Save] Saved " << data.GetValues().size() << " entries to " << path << "\n";
 		return true;

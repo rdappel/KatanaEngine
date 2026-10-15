@@ -33,7 +33,7 @@ namespace KatanaEngine
 		int ScreenWidth = 1600;
 		int ScreenHeight = 900;
 		bool Fullscreen = false;
-		bool PreferDirect3D = false;  // On Windows, prefer D3D over OpenGL
+		bool PreferDirect3D = false; // On Windows, prefer D3D over OpenGL
 
 		// Windows only: when set (an HWND), the game window is embedded as a borderless child
 		// filling this window's client area instead of opening its own top-level window.
@@ -46,9 +46,18 @@ namespace KatanaEngine
 	public:
 		Game(int argc, char** argv, const GameConfig& config);
 
-		Game() : Game(0, nullptr) { }
-		Game(const GameConfig& config) : Game(0, nullptr, config) { }
-		Game(int argc, char** argv) : Game(argc, argv, GameConfig()) { }
+		Game()
+			: Game(0, nullptr)
+		{
+		}
+		Game(const GameConfig& config)
+			: Game(0, nullptr, config)
+		{
+		}
+		Game(int argc, char** argv)
+			: Game(argc, argv, GameConfig())
+		{
+		}
 
 		Game(const Game&) = delete;
 		Game& operator=(const Game&) = delete;
@@ -72,7 +81,7 @@ namespace KatanaEngine
 		void SetTargetFrameRate(double fps);
 		bool SetMouseCursor(MouseCursor cursor);
 
-       ScreenManager& GetScreenManager() { return *m_screenManager; }
+		ScreenManager& GetScreenManager() { return *m_screenManager; }
 		const ScreenManager& GetScreenManager() const { return *m_screenManager; }
 
 		ResourceManager& GetResourceManager() { return m_resourceManager; }
@@ -124,7 +133,7 @@ namespace KatanaEngine
 		InputState m_inputState;
 		SpriteBatch m_spriteBatch;
 		ResourceManager m_resourceManager;
-      std::shared_ptr<ScreenManager> m_screenManager;
+		std::shared_ptr<ScreenManager> m_screenManager;
 
 		GameConfig m_config;
 
@@ -144,7 +153,7 @@ namespace KatanaEngine
 		bool m_isInitialized = false;
 
 		// Hosting: written by other threads, read on the game thread.
-		std::atomic<bool> m_hasHostRequests{ false };
+		std::atomic<bool> m_hasHostRequests{false};
 		std::mutex m_hostMutex;
 		bool m_exitRequested = false;
 		int m_requestedWidth = 0;

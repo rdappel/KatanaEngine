@@ -4,5 +4,5 @@
 
 namespace KatanaEngine
 {
-    const Region Region::EMPTY(0, 0, 0, 0);
+	const Region Region::EMPTY(0, 0, 0, 0);
 }

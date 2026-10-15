@@ -7,7 +7,7 @@ namespace KatanaEngine
 	class IRenderContext
 	{
 	public:
-		virtual ~IRenderContext() { }
+		virtual ~IRenderContext() {}
 
 		virtual Vector2 GetViewOffset() const = 0;
 		virtual Vector2 GetSnappedViewOffset() const = 0;

@@ -5,18 +5,18 @@
 
 namespace KatanaEngine
 {
-    class TextResource
-    {
-    public:
-        virtual ~TextResource() = default;
+	class TextResource
+	{
+	public:
+		virtual ~TextResource() = default;
 
-        virtual bool LoadFromFile(const std::string& path) = 0;
+		virtual bool LoadFromFile(const std::string& path) = 0;
 
-    protected:
-        TextResource() = default;
+	protected:
+		TextResource() = default;
 
-        // Prevent copying - use Clone() for resources that support it
-        TextResource(const TextResource&) = default;
-        TextResource& operator=(const TextResource&) = default;
-    };
+		// Prevent copying - use Clone() for resources that support it
+		TextResource(const TextResource&) = default;
+		TextResource& operator=(const TextResource&) = default;
+	};
 }

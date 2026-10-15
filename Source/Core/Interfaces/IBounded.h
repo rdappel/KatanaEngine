@@ -7,7 +7,7 @@ namespace KatanaEngine
 	class IBounded
 	{
 	public:
-		virtual ~IBounded() { }
+		virtual ~IBounded() {}
 
 		virtual Rectangle GetBounds() const = 0;
 	};

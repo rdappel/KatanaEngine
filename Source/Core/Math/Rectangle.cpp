@@ -21,8 +21,12 @@ namespace KatanaEngine
 		Y += offset.Y;
 	}
 
-	void Rectangle::Draw(const ALLEGRO_COLOR fillColor, const ALLEGRO_COLOR strokeColor,
-		const float strokeWidth, const float offsetX, const float offsetY) const
+	void Rectangle::Draw(
+		const ALLEGRO_COLOR fillColor,
+		const ALLEGRO_COLOR strokeColor,
+		const float strokeWidth,
+		const float offsetX,
+		const float offsetY) const
 	{
 		if (Width <= 0 || Height <= 0) return;
 

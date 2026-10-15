@@ -13,33 +13,21 @@ namespace KatanaEngine
 		if (!item) return;
 
 		m_items.push_back(item);
-		if (m_visibleItemCount <= 0)
-		{
-			m_visibleItemCount = static_cast<int>(m_items.size());
-		}
+		if (m_visibleItemCount <= 0) m_visibleItemCount = static_cast<int>(m_items.size());
 
-		if (m_selectedIndex < 0)
-		{
-			SetFocus(0);
-		}
+		if (m_selectedIndex < 0) SetFocus(0);
 	}
 
 	std::shared_ptr<MenuItem> Menu::GetItem(int index)
 	{
-		if (index < 0 || index >= static_cast<int>(m_items.size()))
-		{
-			return nullptr;
-		}
+		if (index < 0 || index >= static_cast<int>(m_items.size())) return nullptr;
 
 		return m_items[index];
 	}
 
 	std::shared_ptr<const MenuItem> Menu::GetItem(int index) const
 	{
-		if (index < 0 || index >= static_cast<int>(m_items.size()))
-		{
-			return nullptr;
-		}
+		if (index < 0 || index >= static_cast<int>(m_items.size())) return nullptr;
 
 		return m_items[index];
 	}
@@ -52,25 +40,21 @@ namespace KatanaEngine
 
 	bool Menu::SetFocus(int index)
 	{
-		if (index < 0 || index >= static_cast<int>(m_items.size()) || index == m_selectedIndex || !m_items[index]->IsEnabled())
+		if (index < 0 || index >= static_cast<int>(m_items.size()) || index == m_selectedIndex ||
+		    !m_items[index]->IsEnabled())
 		{
 			return false;
 		}
 
 		const int previousIndex = m_selectedIndex;
 		if (previousIndex >= 0 && previousIndex < static_cast<int>(m_items.size()))
-		{
 			m_items[previousIndex]->SetFocused(false);
-		}
 
 		m_selectedIndex = index;
 		m_items[m_selectedIndex]->SetFocused(true);
 		KeepFocusedItemVisible();
 
-		if (OnFocusChanged)
-		{
-			OnFocusChanged(*this, previousIndex, m_selectedIndex);
-		}
+		if (OnFocusChanged) OnFocusChanged(*this, previousIndex, m_selectedIndex);
 
 		return true;
 	}
@@ -104,25 +88,15 @@ namespace KatanaEngine
 	{
 		const int lastVisibleIndex = GetLastVisibleIndex();
 		for (int i = m_firstVisibleIndex; i <= lastVisibleIndex; ++i)
-		{
-			if (m_items[i])
-			{
-				m_items[i]->HandleInput(inputState);
-			}
-		}
+			if (m_items[i]) m_items[i]->HandleInput(inputState);
 
 		if (inputState.IsKeyPressed(Keys::DOWN) || inputState.IsKeyPressed(Keys::S))
-		{
 			FocusNext();
-		}
 		else if (inputState.IsKeyPressed(Keys::UP) || inputState.IsKeyPressed(Keys::W))
-		{
 			FocusPrevious();
-		}
 
-		if (inputState.IsKeyReleased(Keys::ENTER) ||
-			inputState.IsKeyReleased(Keys::SPACE) ||
-			inputState.IsKeyReleased(Keys::E))
+		if (inputState.IsKeyReleased(Keys::ENTER) || inputState.IsKeyReleased(Keys::SPACE) ||
+		    inputState.IsKeyReleased(Keys::E))
 		{
 			SelectFocused();
 		}
@@ -137,18 +111,12 @@ namespace KatanaEngine
 			}
 		}
 
-		if (hoveredIndex < 0)
-		{
-			hoveredIndex = GetItemIndexAtPosition(inputState.GetMousePosition());
-		}
+		if (hoveredIndex < 0) hoveredIndex = GetItemIndexAtPosition(inputState.GetMousePosition());
 
 		if (hoveredIndex >= 0)
 		{
 			SetFocus(hoveredIndex);
-			if (inputState.IsMouseButtonReleased(MouseButton::LEFT))
-			{
-				SelectFocused();
-			}
+			if (inputState.IsMouseButtonReleased(MouseButton::LEFT)) SelectFocused();
 		}
 
 		EngineServices::Cursor::Set(hoveredIndex >= 0 ? MouseCursor::LINK : MouseCursor::DEFAULT);
@@ -158,9 +126,7 @@ namespace KatanaEngine
 	{
 		const int lastVisibleIndex = GetLastVisibleIndex();
 		for (int i = m_firstVisibleIndex; i <= lastVisibleIndex; ++i)
-		{
 			if (m_items[i]) m_items[i]->Update(gameTime);
-		}
 	}
 
 	int Menu::GetLastVisibleIndex() const
@@ -178,13 +144,9 @@ namespace KatanaEngine
 
 		const int visibleCount = m_visibleItemCount <= 0 ? static_cast<int>(m_items.size()) : m_visibleItemCount;
 		if (m_selectedIndex < m_firstVisibleIndex)
-		{
 			m_firstVisibleIndex = m_selectedIndex;
-		}
 		else if (m_selectedIndex >= m_firstVisibleIndex + visibleCount)
-		{
 			m_firstVisibleIndex = m_selectedIndex - visibleCount + 1;
-		}
 
 		const int maxFirstVisible = Math::Max(0, static_cast<int>(m_items.size()) - visibleCount);
 		m_firstVisibleIndex = Math::Clamp(m_firstVisibleIndex, 0, maxFirstVisible);
@@ -194,9 +156,7 @@ namespace KatanaEngine
 	{
 		const int lastVisibleIndex = GetLastVisibleIndex();
 		for (int i = m_firstVisibleIndex; i <= lastVisibleIndex; ++i)
-		{
 			if (m_items[i] && m_items[i]->IsEnabled() && m_items[i]->GetBounds().Contains(position)) return i;
-		}
 
 		return -1;
 	}
@@ -223,10 +183,7 @@ namespace KatanaEngine
 				index = 0;
 			}
 
-			if (m_items[index] && m_items[index]->IsEnabled())
-			{
-				return index;
-			}
+			if (m_items[index] && m_items[index]->IsEnabled()) return index;
 		}
 
 		return startIndex;

@@ -6,23 +6,20 @@
 
 namespace KatanaEngine
 {
-    class SaveManager
-    {
+	class SaveManager
+	{
 
-    public:
+	public:
+		void Register(ISaveable* saveable);
+		void Unregister(ISaveable* saveable);
 
-        void Register(ISaveable* saveable);
-        void Unregister(ISaveable* saveable);
+		SaveData CreateSave() const;
+		void LoadSave(const SaveData& data);
 
-        SaveData CreateSave() const;
-        void LoadSave(const SaveData& data);
+		bool SaveToFile(const std::string& path) const;
+		bool LoadFromFile(const std::string& path);
 
-        bool SaveToFile(const std::string& path) const;
-        bool LoadFromFile(const std::string& path);
-
-    private:
-
-        std::vector<ISaveable*> m_saveables;
-
-    };
+	private:
+		std::vector<ISaveable*> m_saveables;
+	};
 }
