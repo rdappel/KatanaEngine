@@ -33,6 +33,10 @@ BinPackArguments: false
 BreakConstructorInitializers: BeforeComma
 PackConstructorInitializers: Never
 
+# Templates: template<typename T> on its own line, no space after the keyword
+BreakTemplateDeclarations: Yes
+SpaceAfterTemplateKeyword: false
+
 # Declarations
 PointerAlignment: Left
 FixNamespaceComments: false

@@ -162,6 +162,11 @@
     <ClInclude Include="Source\Core\Hosting\HostExports.h" />
     <ClInclude Include="Source\Core\Save\SaveManager.h" />
     <ClInclude Include="Source\Core\Save\SaveData.h" />
+    <ClInclude Include="Source\Core\IO\BinaryReader.h" />
+    <ClInclude Include="Source\Core\IO\Base64.h" />
+    <ClInclude Include="Source\Core\IO\ChecksummedHeader.h" />
+    <ClInclude Include="Source\Core\IO\Crc32.h" />
+    <ClInclude Include="Source\Core\IO\FileBytes.h" />
     <ClInclude Include="Source\Core\Interfaces\IRenderContext.h" />
     <ClInclude Include="Source\Core\Services\EngineServices.h" />
     <ClInclude Include="Source\GUI\Checkbox.h" />
@@ -222,6 +227,11 @@
   <ItemGroup>
     <ClCompile Include="Source\Core\Save\SaveManager.cpp" />
     <ClCompile Include="Source\Core\Save\SaveData.cpp" />
+    <ClCompile Include="Source\Core\IO\BinaryReader.cpp" />
+    <ClCompile Include="Source\Core\IO\Base64.cpp" />
+    <ClCompile Include="Source\Core\IO\ChecksummedHeader.cpp" />
+    <ClCompile Include="Source\Core\IO\Crc32.cpp" />
+    <ClCompile Include="Source\Core\IO\FileBytes.cpp" />
     <ClCompile Include="Source\GUI\Checkbox.cpp" />
     <ClCompile Include="Source\GUI\Panel.cpp" />
     <ClCompile Include="Source\pch.cpp">
