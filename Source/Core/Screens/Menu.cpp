@@ -111,12 +111,20 @@ namespace KatanaEngine
 			}
 		}
 
-		if (hoveredIndex < 0) hoveredIndex = GetItemIndexAtPosition(inputState.GetMousePosition());
+		const Vector2 mousePosition = inputState.GetMousePosition();
+		if (hoveredIndex < 0) hoveredIndex = GetItemIndexAtPosition(mousePosition);
 
-		if (hoveredIndex >= 0)
+		// Hover moves the focus only when the mouse moves or clicks, so a resting mouse doesn't undo keyboard
+		// movement. The first frame only records where the mouse is.
+		const bool hasMouseMoved = m_hasMousePosition && mousePosition != m_lastMousePosition;
+		m_lastMousePosition = mousePosition;
+		m_hasMousePosition = true;
+
+		const bool isClicked = inputState.IsMouseButtonReleased(MouseButton::LEFT);
+		if (hoveredIndex >= 0 && (hasMouseMoved || isClicked))
 		{
 			SetFocus(hoveredIndex);
-			if (inputState.IsMouseButtonReleased(MouseButton::LEFT)) SelectFocused();
+			if (isClicked) SelectFocused();
 		}
 
 		EngineServices::Cursor::Set(hoveredIndex >= 0 ? MouseCursor::LINK : MouseCursor::DEFAULT);

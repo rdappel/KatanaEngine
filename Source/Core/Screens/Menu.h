@@ -71,5 +71,7 @@ namespace KatanaEngine
 		int m_firstVisibleIndex = 0;
 		bool m_wrapFocus = true;
 		bool m_enabled = true;
+		Vector2 m_lastMousePosition; // where HandleInput last saw the mouse, to tell a moving mouse from a resting one
+		bool m_hasMousePosition = false;
 	};
 }
