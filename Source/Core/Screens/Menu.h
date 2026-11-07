@@ -59,6 +59,11 @@ namespace KatanaEngine
 		int GetFirstVisibleIndex() const { return m_firstVisibleIndex; }
 		int GetLastVisibleIndex() const;
 
+		// The keys HandleInput reads. Override these to use different keys; the mouse is not affected.
+		virtual bool IsFocusNextPressed(const InputState& inputState) const;
+		virtual bool IsFocusPreviousPressed(const InputState& inputState) const;
+		virtual bool IsSelectReleased(const InputState& inputState) const;
+
 	private:
 		void KeepFocusedItemVisible();
 		int FindNextFocusableIndex(int startIndex, int step) const;

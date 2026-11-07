@@ -90,16 +90,12 @@ namespace KatanaEngine
 		for (int i = m_firstVisibleIndex; i <= lastVisibleIndex; ++i)
 			if (m_items[i]) m_items[i]->HandleInput(inputState);
 
-		if (inputState.IsKeyPressed(Keys::DOWN) || inputState.IsKeyPressed(Keys::S))
+		if (IsFocusNextPressed(inputState))
 			FocusNext();
-		else if (inputState.IsKeyPressed(Keys::UP) || inputState.IsKeyPressed(Keys::W))
+		else if (IsFocusPreviousPressed(inputState))
 			FocusPrevious();
 
-		if (inputState.IsKeyReleased(Keys::ENTER) || inputState.IsKeyReleased(Keys::SPACE) ||
-		    inputState.IsKeyReleased(Keys::E))
-		{
-			SelectFocused();
-		}
+		if (IsSelectReleased(inputState)) SelectFocused();
 
 		int hoveredIndex = -1;
 		for (int i = m_firstVisibleIndex; i <= lastVisibleIndex; ++i)
@@ -128,6 +124,22 @@ namespace KatanaEngine
 		}
 
 		EngineServices::Cursor::Set(hoveredIndex >= 0 ? MouseCursor::LINK : MouseCursor::DEFAULT);
+	}
+
+	bool Menu::IsFocusNextPressed(const InputState& inputState) const
+	{
+		return inputState.IsKeyPressed(Keys::DOWN) || inputState.IsKeyPressed(Keys::S);
+	}
+
+	bool Menu::IsFocusPreviousPressed(const InputState& inputState) const
+	{
+		return inputState.IsKeyPressed(Keys::UP) || inputState.IsKeyPressed(Keys::W);
+	}
+
+	bool Menu::IsSelectReleased(const InputState& inputState) const
+	{
+		return inputState.IsKeyReleased(Keys::ENTER) || inputState.IsKeyReleased(Keys::SPACE) ||
+		       inputState.IsKeyReleased(Keys::E);
 	}
 
 	void Menu::Update(const GameTime& gameTime)
