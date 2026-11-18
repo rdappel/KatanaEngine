@@ -18,6 +18,7 @@
 
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_audio.h>
+#include <allegro5/allegro_memfile.h>
 #include <allegro5/path.h>
 
 #include <cassert>
@@ -143,6 +144,35 @@ namespace KatanaEngine
 		if (!texture->IsValid()) return nullptr;
 
 		m_resourceCache[cacheKey] = texture;
+		return texture;
+	}
+
+	std::shared_ptr<Texture> ResourceManager::LoadTextureFromMemory(
+		const std::string& cacheKey,
+		const std::vector<uint8_t>& bytes,
+		const std::string& extension)
+	{
+		const std::string typedCacheKey = MakeCacheKey(typeid(Texture), cacheKey);
+
+		const auto it = m_resourceCache.find(typedCacheKey);
+		if (it != m_resourceCache.end()) return std::static_pointer_cast<Texture>(it->second);
+
+		if (bytes.empty()) return nullptr;
+
+		// The memfile is opened read-only, so Allegro never writes through the cast-away const.
+		void* pBytes = const_cast<uint8_t*>(bytes.data());
+		ALLEGRO_FILE* pFile = al_open_memfile(pBytes, static_cast<int64_t>(bytes.size()), "r");
+		if (!pFile) return nullptr;
+
+		ALLEGRO_BITMAP* pBitmap = al_load_bitmap_f(pFile, extension.c_str());
+		al_fclose(pFile);
+
+		auto texture = std::shared_ptr<Texture>(new Texture());
+		texture->SetBitmap(pBitmap);
+
+		if (!texture->IsValid()) return nullptr;
+
+		m_resourceCache[typedCacheKey] = texture;
 		return texture;
 	}
 

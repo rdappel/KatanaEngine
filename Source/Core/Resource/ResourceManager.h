@@ -1,9 +1,11 @@
 #pragma once
 
+#include <cstdint>
 #include <memory>
 #include <string>
 #include <unordered_map>
 #include <typeindex>
+#include <vector>
 
 namespace KatanaEngine
 {
@@ -24,6 +26,17 @@ namespace KatanaEngine
 
 		template<typename T>
 		std::shared_ptr<T> Load(const std::string& path);
+
+		// Creates a texture from encoded image bytes (a PNG read from a content file, for example) and caches it
+		// under cacheKey, in the same cache as Load<Texture>: a later call with the same key, or Load<Texture> with
+		// it as the path, returns the cached texture without reading the bytes. Keys share one namespace with
+		// content paths, so choose one that can't be a real path. extension picks the image format (".png").
+		// bytes are only read during the call; the texture doesn't keep them. Returns nullptr if they don't
+		// decode, and nothing is cached then.
+		std::shared_ptr<Texture> LoadTextureFromMemory(
+			const std::string& cacheKey,
+			const std::vector<uint8_t>& bytes,
+			const std::string& extension = ".png");
 
 		const std::string& GetContentRoot() const { return m_contentRoot; }
 		void ClearCache() { m_resourceCache.clear(); }
