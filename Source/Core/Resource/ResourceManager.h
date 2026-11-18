@@ -5,6 +5,7 @@
 #include <string>
 #include <unordered_map>
 #include <typeindex>
+#include <typeinfo>
 #include <vector>
 
 namespace KatanaEngine
@@ -26,6 +27,18 @@ namespace KatanaEngine
 
 		template<typename T>
 		std::shared_ptr<T> Load(const std::string& path);
+
+		// Returns the resource of type T cached under path (by Load<T>, or by LoadTextureFromMemory for a
+		// Texture), or nullptr if there is none. Never loads anything. T must be a complete type where this
+		// is called.
+		template<typename T>
+		std::shared_ptr<T> Find(const std::string& path) const
+		{
+			const auto it = m_resourceCache.find(MakeCacheKey(typeid(T), path));
+			if (it == m_resourceCache.end()) return nullptr;
+
+			return std::static_pointer_cast<T>(it->second);
+		}
 
 		// Creates a texture from encoded image bytes (a PNG read from a content file, for example) and caches it
 		// under cacheKey, in the same cache as Load<Texture>: a later call with the same key, or Load<Texture> with
