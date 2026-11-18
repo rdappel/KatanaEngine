@@ -369,6 +369,11 @@ namespace KatanaEngine
 				int updateCount = 0;
 				const bool isRunningSlowly = m_accumulatedTime > m_targetElapsedTime * MAX_FRAME_SKIP;
 
+				// Timer events queue up during a stall and draws wait for an empty queue, so without this the
+				// whole stall would be simulated before the next frame is drawn.
+				const double maxCatchUpTime = m_targetElapsedTime * MAX_CATCH_UP_FRAMES;
+				m_accumulatedTime = std::min(m_accumulatedTime, maxCatchUpTime);
+
 				while (m_accumulatedTime >= m_targetElapsedTime && updateCount < MAX_FRAME_SKIP)
 				{
 					m_totalTime += m_targetElapsedTime;

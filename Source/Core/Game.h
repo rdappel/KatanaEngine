@@ -165,5 +165,10 @@ namespace KatanaEngine
 		std::function<void()> m_startedCallback;
 
 		static const int MAX_FRAME_SKIP = 5;
+
+		// The most simulation time, in frames, the loop catches up after a stall (a load, a dragged window,
+		// a breakpoint). Time beyond it is dropped, so the game resumes where it was instead of fast-forwarding
+		// fades and movement through the stall.
+		static const int MAX_CATCH_UP_FRAMES = 2;
 	};
 }
