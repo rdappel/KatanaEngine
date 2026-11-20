@@ -75,6 +75,16 @@ namespace KatanaEngine
 			const Vector2& viewOffset);
 		void End();
 
+		// Clipping, between Begin and End only (ignored otherwise). Limits drawing to a region given in the same
+		// coordinates as a sprite's position: the view offset and the batch's transform (zoom) apply to it, and its
+		// edges are rounded to whole target pixels, each edge the same way, so regions that share an edge tile the
+		// target with no gap or overlap. The clip stays inside the clipping the target had at Begin.
+		// Everything queued so far is drawn first, under the clip it was queued with, so in a deferred batch a clip
+		// change ends one run of sprites, text and shapes and starts another. End restores the target's clipping.
+		void SetClipRegion(const Region& region);
+		// Back to the clipping the target had at Begin.
+		void ResetClipRegion();
+
 		// Draw entire texture at position
 		void Draw(const std::shared_ptr<Texture>& texture, const Vector2& position);
 		void Draw(const std::shared_ptr<Texture>& texture, const Vector2& position, const Color& tint);
@@ -207,6 +217,8 @@ namespace KatanaEngine
 		void FlushBatch();
 		void ApplyBlendState(BlendState blendState);
 		void RestoreBlendState();
+		// Draws what is queued and sets the target's clipping rectangle (in target pixels).
+		void ApplyClipping(const Region& targetRegion);
 
 		struct LineEntry
 		{
@@ -251,6 +263,8 @@ namespace KatanaEngine
 		Vector2 m_viewOffset = Vector2::ZERO;
 		float m_zoom = 1.0f;
 		float m_savedTransform[16] = {}; // stores ALLEGRO_TRANSFORM when zoom != 1
+		Region m_beginClipping;          // the target's clipping rectangle at Begin, in target pixels
+		bool m_isClipped = false;        // a clip region is set; End restores m_beginClipping
 		bool m_hasBegun;
 	};
 }

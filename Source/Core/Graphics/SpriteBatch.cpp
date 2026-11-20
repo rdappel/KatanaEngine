@@ -72,6 +72,16 @@ namespace KatanaEngine
 		m_effect = effect;
 		m_viewOffset = viewOffset;
 		m_previousShader = al_get_current_shader();
+		m_isClipped = false;
+		if (al_get_target_bitmap())
+		{
+			int x = 0;
+			int y = 0;
+			int width = 0;
+			int height = 0;
+			al_get_clipping_rectangle(&x, &y, &width, &height);
+			m_beginClipping = Region(x, y, width, height);
+		}
 		m_spriteQueue.clear();
 		m_textQueue.clear();
 		m_primitiveQueue.clear();
@@ -99,6 +109,13 @@ namespace KatanaEngine
 		FlushBatch();
 
 		if (m_sortMode != SpriteSortMode::IMMEDIATE) al_hold_bitmap_drawing(false);
+
+		if (m_isClipped)
+		{
+			al_set_clipping_rectangle(
+				m_beginClipping.X, m_beginClipping.Y, m_beginClipping.Width, m_beginClipping.Height);
+			m_isClipped = false;
+		}
 
 		RestoreBlendState();
 		al_use_shader(m_previousShader);
@@ -138,6 +155,58 @@ namespace KatanaEngine
 	{
 		// Restore Allegro's default (premultiplied) alpha blending
 		al_set_blender(ALLEGRO_ADD, ALLEGRO_ONE, ALLEGRO_INVERSE_ALPHA);
+	}
+
+	void SpriteBatch::SetClipRegion(const Region& region)
+	{
+		if (!m_hasBegun || !al_get_target_bitmap()) return;
+
+		// The region's corners go where a sprite's would: less the view offset, through the current transform. Its
+		// bounding box covers a rotated transform.
+		const float left = static_cast<float>(region.X) - m_viewOffset.X;
+		const float top = static_cast<float>(region.Y) - m_viewOffset.Y;
+		const float right = left + static_cast<float>(region.Width);
+		const float bottom = top + static_cast<float>(region.Height);
+		float xs[4] = {left, right, left, right};
+		float ys[4] = {top, top, bottom, bottom};
+		const ALLEGRO_TRANSFORM* pTransform = al_get_current_transform();
+		for (int corner = 0; corner < 4; ++corner) al_transform_coordinates(pTransform, &xs[corner], &ys[corner]);
+
+		// Every edge is rounded the same way, so two regions sharing an edge share it in pixels too.
+		const int targetLeft = static_cast<int>(std::lround(*std::min_element(xs, xs + 4)));
+		const int targetTop = static_cast<int>(std::lround(*std::min_element(ys, ys + 4)));
+		const int targetRight = static_cast<int>(std::lround(*std::max_element(xs, xs + 4)));
+		const int targetBottom = static_cast<int>(std::lround(*std::max_element(ys, ys + 4)));
+
+		const int clippedLeft = std::max(targetLeft, m_beginClipping.Left());
+		const int clippedTop = std::max(targetTop, m_beginClipping.Top());
+		const int clippedRight = std::min(targetRight, m_beginClipping.Right());
+		const int clippedBottom = std::min(targetBottom, m_beginClipping.Bottom());
+		ApplyClipping(Region(
+			clippedLeft,
+			clippedTop,
+			std::max(0, clippedRight - clippedLeft),
+			std::max(0, clippedBottom - clippedTop)));
+		m_isClipped = true;
+	}
+
+	void SpriteBatch::ResetClipRegion()
+	{
+		if (!m_hasBegun || !m_isClipped) return;
+
+		ApplyClipping(m_beginClipping);
+		m_isClipped = false;
+	}
+
+	void SpriteBatch::ApplyClipping(const Region& targetRegion)
+	{
+		FlushBatch();
+
+		// Held drawing is released around the change so nothing Allegro has cached is drawn under the new clip.
+		const bool isHeld = m_sortMode != SpriteSortMode::IMMEDIATE;
+		if (isHeld) al_hold_bitmap_drawing(false);
+		al_set_clipping_rectangle(targetRegion.X, targetRegion.Y, targetRegion.Width, targetRegion.Height);
+		if (isHeld) al_hold_bitmap_drawing(true);
 	}
 
 	void SpriteBatch::FlushBatch()
